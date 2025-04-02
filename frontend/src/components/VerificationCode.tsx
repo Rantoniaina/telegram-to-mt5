@@ -173,6 +173,7 @@ const VerificationCode = ({
             value={verificationCode}
             onChange={handleVerificationCodeChange}
             sx={{ mb: 2 }}
+            autoComplete='off'
           />
 
           {needsPassword && (
@@ -184,6 +185,7 @@ const VerificationCode = ({
               value={password}
               onChange={handlePasswordChange}
               sx={{ mb: 2 }}
+              autoComplete='off'
             />
           )}
         </Box>

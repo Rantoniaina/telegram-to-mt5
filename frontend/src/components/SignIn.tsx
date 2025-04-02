@@ -316,6 +316,7 @@ const SignIn = () => {
             error={errors.apiId}
             helperText={errors.apiId ? t('signIn.apiId.error') : ''}
             sx={{ mb: 2 }}
+            autoComplete='off'
           />
           <StyledTextField
             required
@@ -327,6 +328,7 @@ const SignIn = () => {
             error={errors.apiHash}
             helperText={errors.apiHash ? t('signIn.apiHash.error') : ''}
             sx={{ mb: 2 }}
+            autoComplete='off'
           />
           <StyledTextField
             required
@@ -338,6 +340,7 @@ const SignIn = () => {
             error={errors.phone}
             helperText={errors.phone ? t('signIn.phone.error') : ''}
             sx={{ mb: 2 }}
+            autoComplete='off'
           />
           <FormControlLabel
             control={
