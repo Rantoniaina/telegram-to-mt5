@@ -6,37 +6,19 @@ import {
   Container,
   Paper,
   TextField,
-  InputAdornment,
-  Select,
-  MenuItem,
-  FormControl,
-  SelectChangeEvent,
-  Grid,
+  FormControlLabel,
+  Checkbox,
   alpha,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
-import PublicIcon from '@mui/icons-material/Public';
-import PhoneIcon from '@mui/icons-material/Phone';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import logo from '../assets/logo.svg';
 import { styled } from '@mui/material/styles';
+import InfoIcon from '@mui/icons-material/Info';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),
   backdropFilter: 'blur(10px)',
   border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`,
-}));
-
-const StyledSelect = styled(Select)(({ theme }) => ({
-  backgroundColor: alpha(theme.palette.background.paper, 0.1),
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: alpha(theme.palette.common.white, 0.1),
-  },
-  '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: alpha(theme.palette.common.white, 0.2),
-  },
-  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.primary.main,
-  },
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -55,16 +37,31 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const SignIn = () => {
-  const [country, setCountry] = useState('Jamaica');
-  const [phone, setPhone] = useState('');
+  const [apiId, setApiId] = useState('');
+  const [apiHash, setApiHash] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({
+    apiId: false,
+    apiHash: false,
+  });
 
-  const handleCountryChange = (event: SelectChangeEvent) => {
-    setCountry(event.target.value);
+  const handleApiIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApiId(event.target.value);
+    setErrors((prev) => ({ ...prev, apiId: !event.target.value }));
   };
 
-  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(event.target.value);
+  const handleApiHashChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApiHash(event.target.value);
+    setErrors((prev) => ({ ...prev, apiHash: !event.target.value }));
   };
+
+  const handleRememberMeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRememberMe(event.target.checked);
+  };
+
+  const isFormValid = apiId.trim() !== '' && apiHash.trim() !== '';
 
   return (
     <Container
@@ -93,91 +90,96 @@ const SignIn = () => {
             mb: 4,
           }}
         >
-          <img
-            src={logo}
-            alt='U&me Logo'
-            style={{ width: 80, height: 80, marginBottom: 16 }}
-          />
           <Typography variant='h4' component='h1' gutterBottom>
             Sign in
           </Typography>
-          <Typography variant='body1' color='text.secondary' align='center'>
-            Please choose your country and enter
-            <br />
-            your full phone number
-          </Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <FormControl fullWidth variant='outlined'>
-            <StyledSelect
-              value={country}
-              onChange={handleCountryChange}
-              displayEmpty
-              inputProps={{ 'aria-label': 'Select country' }}
-              startAdornment={
-                <InputAdornment position='start'>
-                  <PublicIcon sx={{ color: 'text.secondary' }} />
-                </InputAdornment>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant='body1' color='text.secondary'>
+              Please enter your Telegram API ID and API HASH
+            </Typography>
+            <Tooltip
+              title={
+                <Box sx={{ p: 1 }}>
+                  <Typography variant='body2' component='div'>
+                    <Box component='ol' sx={{ m: 0, pl: 2 }}>
+                      <li>Go to https://my.telegram.org/auth</li>
+                      <li>Log in with your phone number</li>
+                      <li>Click on 'API development tools'</li>
+                      <li>Fill in the required information</li>
+                      <li>Your API ID and API Hash will be displayed</li>
+                    </Box>
+                  </Typography>
+                </Box>
               }
-              IconComponent={KeyboardArrowDownIcon}
-              sx={{
-                height: 56,
-                '& .MuiSelect-select': {
-                  display: 'flex',
-                  alignItems: 'center',
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    bgcolor: 'background.paper',
+                    '& .MuiTooltip-arrow': {
+                      color: 'background.paper',
+                    },
+                    boxShadow: 1,
+                    borderRadius: 1,
+                  },
                 },
               }}
             >
-              <MenuItem value='Jamaica'>Jamaica</MenuItem>
-              <MenuItem value='United States'>United States</MenuItem>
-              <MenuItem value='Canada'>Canada</MenuItem>
-              <MenuItem value='United Kingdom'>United Kingdom</MenuItem>
-            </Select>
-          </FormControl>
+              <IconButton size='small' sx={{ color: alpha('#fff', 0.7) }}>
+                <InfoIcon fontSize='small' />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
 
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={4}>
-            <StyledTextField
-              fullWidth
-              disabled
-              value='+1 876'
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <PhoneIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiInputBase-input.Mui-disabled': {
-                  WebkitTextFillColor: '#fff',
-                  opacity: 0.7,
-                },
-              }}
-            />
-          </Grid>
-          <Grid item xs={8}>
-            <StyledTextField
-              fullWidth
-              placeholder='Enter your phone'
-              value={phone}
-              onChange={handlePhoneChange}
-              InputProps={{
-                sx: {
-                  height: '100%',
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
+        <Box sx={{ mb: 3 }}>
+          <StyledTextField
+            required
+            fullWidth
+            label='API ID'
+            value={apiId}
+            onChange={handleApiIdChange}
+            error={errors.apiId}
+            helperText={errors.apiId ? 'API ID is required' : ''}
+            sx={{ mb: 2 }}
+          />
+          <StyledTextField
+            required
+            fullWidth
+            label='API HASH'
+            value={apiHash}
+            onChange={handleApiHashChange}
+            error={errors.apiHash}
+            helperText={errors.apiHash ? 'API HASH is required' : ''}
+            sx={{ mb: 2 }}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={handleRememberMeChange}
+                sx={{
+                  color: alpha('#fff', 0.7),
+                  '&.Mui-checked': {
+                    color: '#4CAF50',
+                  },
+                }}
+              />
+            }
+            label='Remember me'
+            sx={{
+              mt: 2,
+              color: alpha('#fff', 0.7),
+            }}
+          />
+        </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Button
             variant='contained'
             color='primary'
             size='large'
+            disabled={!isFormValid}
             sx={{
               minWidth: 120,
               height: 48,
@@ -193,7 +195,7 @@ const SignIn = () => {
             Next
           </Button>
         </Box>
-      </Paper>
+      </StyledPaper>
     </Container>
   );
 };
