@@ -116,11 +116,13 @@ const SignIn = () => {
                 <Box sx={{ p: 1 }}>
                   <Typography variant='body2' component='div'>
                     <Box component='ol' sx={{ m: 0, pl: 2 }}>
-                      {t('signIn.tooltip.steps', { returnObjects: true }).map(
-                        (step, index) => (
-                          <li key={index}>{step}</li>
-                        )
-                      )}
+                      {(
+                        t('signIn.tooltip.steps', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((step: string, index: number) => (
+                        <li key={`tooltip-step-${index}`}>{step}</li>
+                      ))}
                     </Box>
                   </Typography>
                 </Box>
