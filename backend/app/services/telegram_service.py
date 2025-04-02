@@ -44,32 +44,69 @@ class TelegramService:
         self.code_callback = code_callback
         self.password_callback = password_callback
         self.client = TelegramClient(session_name, api_id, api_hash)
+        self.phone_code_hash = None  # Store phone code hash for sign-in
     
     async def connect(self) -> None:
         """Connect to Telegram and handle authentication if needed."""
-        await self.client.connect()
+        # Ensure client is connected
+        if not self.client.is_connected():
+            await self.client.connect()
         
         if not await self.client.is_user_authorized():
             if not self.phone:
                 raise ValueError("Phone number is required for first-time authentication")
             
-            await self.client.send_code_request(self.phone)
+            # Send code and store the phone_code_hash
+            result = await self.client.send_code_request(self.phone)
+            self.phone_code_hash = result.phone_code_hash
             
-            # Get verification code
-            if self.code_callback:
-                code = self.code_callback()
-            else:
-                code = input("Enter the code you received: ")
+            # For the API to handle, we'll raise an exception to indicate verification is needed
+            raise ValueError("Verification code required. Please check your phone.")
+    
+    async def sign_in_with_code(self, code: str) -> None:
+        """
+        Sign in with a verification code.
+        
+        Args:
+            code: Verification code received on the phone
+        """
+        if not self.phone:
+            raise ValueError("Phone number is required for authentication")
+        
+        # Ensure client is connected
+        if not self.client.is_connected():
+            await self.client.connect()
+        
+        try:
+            await self.client.sign_in(self.phone, code, phone_code_hash=self.phone_code_hash)
+        except SessionPasswordNeededError:
+            # If 2FA is enabled, we need to handle it differently
+            raise ValueError("Two-step verification is enabled. Password is required.")
+    
+    async def sign_in_with_password(self, code: str, password: str) -> None:
+        """
+        Sign in with a verification code and 2FA password.
+        
+        Args:
+            code: Verification code received on the phone
+            password: Two-step verification password
+        """
+        if not self.phone:
+            raise ValueError("Phone number is required for authentication")
+        
+        # Ensure client is connected
+        if not self.client.is_connected():
+            await self.client.connect()
             
+        try:
+            # First try to sign in with the code
             try:
-                await self.client.sign_in(self.phone, code)
+                await self.client.sign_in(self.phone, code, phone_code_hash=self.phone_code_hash)
             except SessionPasswordNeededError:
-                # Get 2FA password if needed
-                if self.password_callback:
-                    password = self.password_callback()
-                else:
-                    password = input("Two-step verification enabled. Please enter your password: ")
+                # If 2FA is enabled, use the password
                 await self.client.sign_in(password=password)
+        except Exception as e:
+            raise ValueError(f"Authentication failed: {str(e)}")
     
     async def get_all_dialogs(self) -> List[Dict[str, Any]]:
         """

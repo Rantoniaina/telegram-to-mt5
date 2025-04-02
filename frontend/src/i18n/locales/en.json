@@ -1,17 +1,39 @@
 {
+    "common": {
+        "back": "Back"
+    },
     "signIn": {
         "title": "Sign in",
         "description": "Please enter your Telegram API ID and API HASH",
         "apiId": {
             "label": "API ID",
+            "placeholder": "Enter your API ID",
             "error": "API ID is required"
         },
         "apiHash": {
             "label": "API HASH",
+            "placeholder": "Enter your API HASH",
             "error": "API HASH is required"
+        },
+        "phone": {
+            "label": "Phone Number (with country code)",
+            "placeholder": "e.g., +1234567890",
+            "error": "Phone number is required for first-time authentication"
+        },
+        "verificationTitle": "Verification",
+        "verificationCode": {
+            "label": "Verification Code",
+            "placeholder": "Enter the code sent to your phone",
+            "error": "Verification code is required"
+        },
+        "password": {
+            "label": "Two-step Verification Password",
+            "placeholder": "Enter your password",
+            "error": "Password is required"
         },
         "rememberMe": "Remember me",
         "next": "Next",
+        "verify": "Verify",
         "tooltip": {
             "steps": [
                 "Go to https://my.telegram.org/auth",
@@ -20,6 +42,12 @@
                 "Fill in the required information",
                 "Your API ID and API Hash will be displayed"
             ]
-        }
+        },
+        "connectSuccess": "Successfully connected to Telegram",
+        "connectError": "Failed to connect to Telegram",
+        "codePrompt": "Enter the verification code sent to your phone",
+        "passwordPrompt": "Enter your two-step verification password",
+        "passwordRequired": "Two-step verification password is required",
+        "verificationError": "Verification failed"
     }
 }

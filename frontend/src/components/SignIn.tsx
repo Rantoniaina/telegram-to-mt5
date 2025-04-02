@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -11,11 +11,18 @@ import {
   alpha,
   IconButton,
   Tooltip,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import telegramService from '../services/telegramService';
+import { ApiError } from '../services/apiService';
+import { TelegramCredentials } from '../types/telegram';
+import VerificationCode from './VerificationCode';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -38,14 +45,30 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
+// Define possible auth steps
+enum AuthStep {
+  CREDENTIALS,
+  VERIFICATION_CODE,
+  COMPLETE,
+}
+
 const SignIn = () => {
   const { t } = useTranslation();
   const [apiId, setApiId] = useState('');
   const [apiHash, setApiHash] = useState('');
+  const [phone, setPhone] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [authStep, setAuthStep] = useState<AuthStep>(AuthStep.CREDENTIALS);
+  const [credentials, setCredentials] = useState<TelegramCredentials | null>(
+    null
+  );
   const [errors, setErrors] = useState({
     apiId: false,
     apiHash: false,
+    phone: false,
   });
 
   const handleApiIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,13 +81,147 @@ const SignIn = () => {
     setErrors((prev) => ({ ...prev, apiHash: !event.target.value }));
   };
 
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(event.target.value);
+    setErrors((prev) => ({ ...prev, phone: !event.target.value }));
+  };
+
   const handleRememberMeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRememberMe(event.target.checked);
   };
 
-  const isFormValid = apiId.trim() !== '' && apiHash.trim() !== '';
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Validate form
+      const needsPhone = true; // Set to true if phone is required
+      if (!apiId || !apiHash || (needsPhone && !phone)) {
+        setErrors({
+          apiId: !apiId,
+          apiHash: !apiHash,
+          phone: needsPhone && !phone,
+        });
+        return;
+      }
+
+      // Create credentials object
+      const credentialsObj: TelegramCredentials = {
+        api_id: parseInt(apiId, 10),
+        api_hash: apiHash,
+      };
+
+      // Add phone number if provided
+      if (phone) {
+        credentialsObj.phone = phone;
+      }
+
+      console.log('Submitting credentials:', credentialsObj);
+
+      // Store credentials if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem(
+          'telegramCredentials',
+          JSON.stringify(credentialsObj)
+        );
+      } else {
+        localStorage.removeItem('telegramCredentials');
+      }
+
+      // Connect to Telegram
+      const response = await telegramService.connect(credentialsObj);
+
+      console.log('Connection response:', response);
+
+      // Check if verification code is needed, regardless of success value
+      if (response.needs_verification) {
+        // Move to verification step
+        setCredentials(credentialsObj);
+        setAuthStep(AuthStep.VERIFICATION_CODE);
+      } else if (response.success) {
+        // Authentication complete without verification needed
+        setSuccess(true);
+        setAuthStep(AuthStep.COMPLETE);
+      }
+    } catch (err) {
+      console.error('Failed to connect to Telegram:', err);
+      let errorMessage = t('signIn.connectError');
+
+      if (err instanceof ApiError) {
+        errorMessage = err.message;
+        // Check if error indicates verification code is needed
+        if (err.status === 401 && err.message.includes('verification code')) {
+          setCredentials({
+            api_id: parseInt(apiId, 10),
+            api_hash: apiHash,
+            phone: phone,
+          });
+          setAuthStep(AuthStep.VERIFICATION_CODE);
+          return; // Don't show error in this case
+        }
+      }
+
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerificationSuccess = () => {
+    setSuccess(true);
+    setAuthStep(AuthStep.COMPLETE);
+  };
+
+  const handleBackToCredentials = () => {
+    setAuthStep(AuthStep.CREDENTIALS);
+  };
+
+  const handleCloseError = () => {
+    setError(null);
+  };
+
+  const handleCloseSuccess = () => {
+    setSuccess(false);
+  };
+
+  // Check for stored credentials on component mount
+  useEffect(() => {
+    const storedCredentials = localStorage.getItem('telegramCredentials');
+    if (storedCredentials) {
+      try {
+        const {
+          api_id,
+          api_hash,
+          phone: storedPhone,
+        } = JSON.parse(storedCredentials);
+        setApiId(String(api_id));
+        setApiHash(api_hash);
+        if (storedPhone) {
+          setPhone(storedPhone);
+        }
+        setRememberMe(true);
+      } catch (err) {
+        console.error('Failed to parse stored credentials:', err);
+      }
+    }
+  }, []);
+
+  const isFormValid =
+    apiId.trim() !== '' && apiHash.trim() !== '' && phone.trim() !== '';
+
+  // Render verification code screen if needed
+  if (authStep === AuthStep.VERIFICATION_CODE && credentials) {
+    return (
+      <VerificationCode
+        credentials={credentials}
+        onSuccess={handleVerificationSuccess}
+        onBack={handleBackToCredentials}
+      />
+    );
+  }
 
   return (
     <Container
@@ -153,6 +310,7 @@ const SignIn = () => {
             required
             fullWidth
             label={t('signIn.apiId.label')}
+            placeholder={t('signIn.apiId.placeholder')}
             value={apiId}
             onChange={handleApiIdChange}
             error={errors.apiId}
@@ -163,10 +321,22 @@ const SignIn = () => {
             required
             fullWidth
             label={t('signIn.apiHash.label')}
+            placeholder={t('signIn.apiHash.placeholder')}
             value={apiHash}
             onChange={handleApiHashChange}
             error={errors.apiHash}
             helperText={errors.apiHash ? t('signIn.apiHash.error') : ''}
+            sx={{ mb: 2 }}
+          />
+          <StyledTextField
+            required
+            fullWidth
+            label={t('signIn.phone.label')}
+            placeholder={t('signIn.phone.placeholder')}
+            value={phone}
+            onChange={handlePhoneChange}
+            error={errors.phone}
+            helperText={errors.phone ? t('signIn.phone.error') : ''}
             sx={{ mb: 2 }}
           />
           <FormControlLabel
@@ -195,7 +365,8 @@ const SignIn = () => {
             variant='contained'
             color='primary'
             size='large'
-            disabled={!isFormValid}
+            disabled={!isFormValid || loading}
+            onClick={handleSubmit}
             sx={{
               minWidth: 120,
               height: 48,
@@ -208,10 +379,46 @@ const SignIn = () => {
               },
             }}
           >
-            {t('signIn.next')}
+            {loading ? (
+              <CircularProgress size={24} color='inherit' />
+            ) : (
+              t('signIn.next')
+            )}
           </Button>
         </Box>
       </StyledPaper>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity='error'
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSuccess}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSuccess}
+          severity='success'
+          sx={{ width: '100%' }}
+        >
+          {t('signIn.connectSuccess')}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

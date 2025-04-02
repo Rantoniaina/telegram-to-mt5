@@ -2,16 +2,33 @@
 API endpoints for Telegram operations.
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, HTTPException, BackgroundTasks
+from pydantic import BaseModel, Field
 
 from app.schemas.telegram import TelegramCredentials, DialogResponse, MessageResponse, SearchRequest
 from app.services.telegram_service import TelegramService
 
 # Dictionary to store active client sessions
 active_sessions = {}
+# Dictionary to store pending verification sessions
+pending_verifications = {}
 
 router = APIRouter(prefix="/telegram", tags=["telegram"])
+
+# Additional schema for verification code
+class VerificationRequest(BaseModel):
+    credentials: TelegramCredentials
+    code: str
+    password: Optional[str] = None
+
+class VerificationResponse(BaseModel):
+    success: bool
+    needs_password: bool = False
+
+class ConnectResponse(BaseModel):
+    success: bool
+    needs_verification: bool = False
 
 # --- Helper Functions ---
 async def get_telegram_service(credentials: TelegramCredentials) -> TelegramService:
@@ -36,6 +53,15 @@ async def get_telegram_service(credentials: TelegramCredentials) -> TelegramServ
         return service
     except Exception as e:
         await service.disconnect()
+        # Check if the error indicates verification code is needed
+        error_message = str(e)
+        if "verification code" in error_message.lower():
+            # Store the session for later verification
+            pending_verifications[session_id] = service
+            raise HTTPException(
+                status_code=401,
+                detail="Verification code required. Please submit the code sent to your phone."
+            )
         raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
 
 async def cleanup_session(session_id: str) -> None:
@@ -44,16 +70,68 @@ async def cleanup_session(session_id: str) -> None:
         service = active_sessions[session_id]
         await service.disconnect()
         del active_sessions[session_id]
+    
+    if session_id in pending_verifications:
+        service = pending_verifications[session_id]
+        await service.disconnect()
+        del pending_verifications[session_id]
 
 # --- API Endpoints ---
-@router.post("/connect", response_model=Dict[str, bool])
+@router.post("/connect", response_model=ConnectResponse)
 async def connect_to_telegram(credentials: TelegramCredentials):
     """Connect to Telegram using API credentials."""
     try:
+        session_id = f"{credentials.api_id}_{credentials.api_hash}"
+        
+        # If this session is in pending verifications, return needs_verification
+        if session_id in pending_verifications:
+            return ConnectResponse(success=True, needs_verification=True)
+            
         service = await get_telegram_service(credentials)
-        return {"success": True}
+        return ConnectResponse(success=True)
+    except HTTPException as e:
+        if e.status_code == 401 and "verification code" in e.detail.lower():
+            return ConnectResponse(success=False, needs_verification=True)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/verify_code", response_model=VerificationResponse)
+async def verify_code(verification_request: VerificationRequest):
+    """Verify Telegram code sent to the user's phone."""
+    credentials = verification_request.credentials
+    session_id = f"{credentials.api_id}_{credentials.api_hash}"
+    
+    try:
+        # Get the pending service
+        if session_id not in pending_verifications:
+            raise HTTPException(status_code=400, detail="No pending verification for these credentials")
+        
+        service = pending_verifications[session_id]
+        
+        # Try to sign in with the code
+        try:
+            if verification_request.password:
+                # Sign in with 2FA
+                await service.sign_in_with_password(verification_request.code, verification_request.password)
+            else:
+                # Sign in with code only
+                await service.sign_in_with_code(verification_request.code)
+                
+            # Move the service from pending to active
+            active_sessions[session_id] = service
+            del pending_verifications[session_id]
+            
+            return VerificationResponse(success=True)
+        except Exception as e:
+            error_message = str(e)
+            if "2fa" in error_message.lower() or "two-step verification" in error_message.lower():
+                return VerificationResponse(success=False, needs_password=True)
+            raise
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Verification failed: {str(e)}")
 
 @router.post("/disconnect")
 async def disconnect_from_telegram(credentials: TelegramCredentials, background_tasks: BackgroundTasks):
