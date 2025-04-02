@@ -6,8 +6,6 @@ import {
   Container,
   Paper,
   TextField,
-  FormControlLabel,
-  Checkbox,
   alpha,
   IconButton,
   Tooltip,
@@ -57,7 +55,6 @@ const SignIn = () => {
   const [apiId, setApiId] = useState('');
   const [apiHash, setApiHash] = useState('');
   const [phone, setPhone] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -84,12 +81,6 @@ const SignIn = () => {
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(event.target.value);
     setErrors((prev) => ({ ...prev, phone: !event.target.value }));
-  };
-
-  const handleRememberMeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRememberMe(event.target.checked);
   };
 
   const handleSubmit = async () => {
@@ -120,16 +111,6 @@ const SignIn = () => {
       }
 
       console.log('Submitting credentials:', credentialsObj);
-
-      // Store credentials if remember me is checked
-      if (rememberMe) {
-        localStorage.setItem(
-          'telegramCredentials',
-          JSON.stringify(credentialsObj)
-        );
-      } else {
-        localStorage.removeItem('telegramCredentials');
-      }
 
       // Connect to Telegram
       const response = await telegramService.connect(credentialsObj);
@@ -186,28 +167,6 @@ const SignIn = () => {
   const handleCloseSuccess = () => {
     setSuccess(false);
   };
-
-  // Check for stored credentials on component mount
-  useEffect(() => {
-    const storedCredentials = localStorage.getItem('telegramCredentials');
-    if (storedCredentials) {
-      try {
-        const {
-          api_id,
-          api_hash,
-          phone: storedPhone,
-        } = JSON.parse(storedCredentials);
-        setApiId(String(api_id));
-        setApiHash(api_hash);
-        if (storedPhone) {
-          setPhone(storedPhone);
-        }
-        setRememberMe(true);
-      } catch (err) {
-        console.error('Failed to parse stored credentials:', err);
-      }
-    }
-  }, []);
 
   const isFormValid =
     apiId.trim() !== '' && apiHash.trim() !== '' && phone.trim() !== '';
@@ -341,25 +300,6 @@ const SignIn = () => {
             helperText={errors.phone ? t('signIn.phone.error') : ''}
             sx={{ mb: 2 }}
             autoComplete='off'
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={rememberMe}
-                onChange={handleRememberMeChange}
-                sx={{
-                  color: alpha('#fff', 0.7),
-                  '&.Mui-checked': {
-                    color: '#4CAF50',
-                  },
-                }}
-              />
-            }
-            label={t('signIn.rememberMe')}
-            sx={{
-              mt: 2,
-              color: alpha('#fff', 0.7),
-            }}
           />
         </Box>
 
