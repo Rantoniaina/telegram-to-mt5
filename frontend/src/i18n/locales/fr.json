@@ -1,0 +1,25 @@
+{
+    "signIn": {
+        "title": "Connexion",
+        "description": "Veuillez saisir votre ID API et HASH API Telegram",
+        "apiId": {
+            "label": "ID API",
+            "error": "L'ID API est requis"
+        },
+        "apiHash": {
+            "label": "HASH API",
+            "error": "Le HASH API est requis"
+        },
+        "rememberMe": "Se souvenir de moi",
+        "next": "Suivant",
+        "tooltip": {
+            "steps": [
+                "Allez sur https://my.telegram.org/auth",
+                "Connectez-vous avec votre numéro de téléphone",
+                "Cliquez sur 'Outils de développement API'",
+                "Remplissez les informations requises",
+                "Votre ID API et Hash API seront affichés"
+            ]
+        }
+    }
+}

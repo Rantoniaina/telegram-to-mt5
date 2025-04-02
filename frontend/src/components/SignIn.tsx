@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -37,6 +39,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const SignIn = () => {
+  const { t } = useTranslation();
   const [apiId, setApiId] = useState('');
   const [apiHash, setApiHash] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -90,23 +93,34 @@ const SignIn = () => {
             mb: 4,
           }}
         >
-          <Typography variant='h4' component='h1' gutterBottom>
-            Sign in
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              mb: 2,
+            }}
+          >
+            <Typography variant='h4' component='h1'>
+              {t('signIn.title')}
+            </Typography>
+            <LanguageSwitcher />
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant='body1' color='text.secondary'>
-              Please enter your Telegram API ID and API HASH
+              {t('signIn.description')}
             </Typography>
             <Tooltip
               title={
                 <Box sx={{ p: 1 }}>
                   <Typography variant='body2' component='div'>
                     <Box component='ol' sx={{ m: 0, pl: 2 }}>
-                      <li>Go to https://my.telegram.org/auth</li>
-                      <li>Log in with your phone number</li>
-                      <li>Click on 'API development tools'</li>
-                      <li>Fill in the required information</li>
-                      <li>Your API ID and API Hash will be displayed</li>
+                      {t('signIn.tooltip.steps', { returnObjects: true }).map(
+                        (step, index) => (
+                          <li key={index}>{step}</li>
+                        )
+                      )}
                     </Box>
                   </Typography>
                 </Box>
@@ -136,21 +150,21 @@ const SignIn = () => {
           <StyledTextField
             required
             fullWidth
-            label='API ID'
+            label={t('signIn.apiId.label')}
             value={apiId}
             onChange={handleApiIdChange}
             error={errors.apiId}
-            helperText={errors.apiId ? 'API ID is required' : ''}
+            helperText={errors.apiId ? t('signIn.apiId.error') : ''}
             sx={{ mb: 2 }}
           />
           <StyledTextField
             required
             fullWidth
-            label='API HASH'
+            label={t('signIn.apiHash.label')}
             value={apiHash}
             onChange={handleApiHashChange}
             error={errors.apiHash}
-            helperText={errors.apiHash ? 'API HASH is required' : ''}
+            helperText={errors.apiHash ? t('signIn.apiHash.error') : ''}
             sx={{ mb: 2 }}
           />
           <FormControlLabel
@@ -166,7 +180,7 @@ const SignIn = () => {
                 }}
               />
             }
-            label='Remember me'
+            label={t('signIn.rememberMe')}
             sx={{
               mt: 2,
               color: alpha('#fff', 0.7),
@@ -192,7 +206,7 @@ const SignIn = () => {
               },
             }}
           >
-            Next
+            {t('signIn.next')}
           </Button>
         </Box>
       </StyledPaper>
