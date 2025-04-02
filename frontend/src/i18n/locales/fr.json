@@ -1,0 +1,53 @@
+{
+    "common": {
+        "back": "Retour"
+    },
+    "signIn": {
+        "title": "Connexion",
+        "description": "Veuillez saisir votre ID API et HASH API Telegram",
+        "apiId": {
+            "label": "ID API",
+            "placeholder": "Entrez votre ID API",
+            "error": "L'ID API est requis"
+        },
+        "apiHash": {
+            "label": "HASH API",
+            "placeholder": "Entrez votre HASH API",
+            "error": "Le HASH API est requis"
+        },
+        "phone": {
+            "label": "Numéro de téléphone (avec code pays)",
+            "placeholder": "ex., +33612345678",
+            "error": "Le numéro de téléphone est requis pour la première authentification"
+        },
+        "verificationTitle": "Vérification",
+        "verificationCode": {
+            "label": "Code de vérification",
+            "placeholder": "Entrez le code envoyé sur votre téléphone",
+            "error": "Le code de vérification est requis"
+        },
+        "password": {
+            "label": "Mot de passe de vérification en deux étapes",
+            "placeholder": "Entrez votre mot de passe",
+            "error": "Le mot de passe est requis"
+        },
+        "rememberMe": "Se souvenir de moi",
+        "next": "Suivant",
+        "verify": "Vérifier",
+        "tooltip": {
+            "steps": [
+                "Allez sur https://my.telegram.org/auth",
+                "Connectez-vous avec votre numéro de téléphone",
+                "Cliquez sur 'Outils de développement API'",
+                "Remplissez les informations requises",
+                "Votre ID API et Hash API seront affichés"
+            ]
+        },
+        "connectSuccess": "Connexion à Telegram réussie",
+        "connectError": "Échec de la connexion à Telegram",
+        "codePrompt": "Entrez le code de vérification envoyé à votre téléphone",
+        "passwordPrompt": "Entrez votre mot de passe de vérification en deux étapes",
+        "passwordRequired": "Le mot de passe de vérification en deux étapes est requis",
+        "verificationError": "Échec de la vérification"
+    }
+}

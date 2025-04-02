@@ -1,0 +1,133 @@
+# Telegram API Service
+
+A RESTful API service that connects to Telegram using API credentials and retrieves discussions, messages, and other data.
+
+## Project Structure
+
+```
+backend/
+├── app/                 # Main application package
+│   ├── api/             # API endpoints
+│   │   ├── v1/          # API version 1
+│   │   │   ├── router.py    # Main API router
+│   │   │   └── telegram.py  # Telegram endpoints
+│   ├── config/          # Configuration
+│   │   └── settings.py  # App settings
+│   ├── core/            # Core functionality
+│   │   └── app_factory.py  # FastAPI app factory
+│   ├── schemas/         # Pydantic models
+│   │   └── telegram.py  # Telegram schemas
+│   ├── services/        # Business logic services
+│   │   └── telegram_service.py  # Telegram service
+│   └── main.py          # Application entry point
+├── requirements.txt     # Dependencies
+└── run.py               # Script to run the server
+```
+
+## Features
+
+- Connect to Telegram using API ID and API hash
+- Retrieve all dialogs (chats, channels, groups)
+- Get messages from specific dialogs
+- Search for messages across dialogs
+- Session management for multiple clients
+
+## Requirements
+
+- Python 3.7+
+- Telethon library for Telegram API access
+- FastAPI for the REST API
+- Other dependencies listed in `requirements.txt`
+
+## Setup
+
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Get your Telegram API credentials:
+
+   - Go to https://my.telegram.org/
+   - Log in with your phone number
+   - Create a new application to get your API ID and API hash
+
+3. Create a `.env` file with your configuration:
+
+```
+# Telegram API Settings (Optional - can be provided via API)
+TELEGRAM_API_ID=
+TELEGRAM_API_HASH=
+TELEGRAM_PHONE=
+
+# API Settings
+PORT=8000
+HOST=0.0.0.0
+DEBUG=True
+```
+
+## Running the API Server
+
+```bash
+# Method 1: Run directly
+python backend/run.py
+
+# Method 2: Run with module path
+python -m app.main
+```
+
+The server will start on http://localhost:8000 by default. You can access the interactive API documentation at http://localhost:8000/docs.
+
+## API Usage
+
+### 1. Connect to Telegram
+
+```bash
+curl -X POST http://localhost:8000/v1/telegram/connect \
+  -H "Content-Type: application/json" \
+  -d '{"api_id": 123456, "api_hash": "your_api_hash", "phone": "+1234567890"}'
+```
+
+### 2. Get Dialogs (Chats, Channels, Groups)
+
+```bash
+curl -X POST http://localhost:8000/v1/telegram/dialogs \
+  -H "Content-Type: application/json" \
+  -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
+```
+
+### 3. Get Messages from a Dialog
+
+```bash
+curl -X POST "http://localhost:8000/v1/telegram/messages/12345?limit=50" \
+  -H "Content-Type: application/json" \
+  -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
+```
+
+### 4. Search Messages
+
+```bash
+curl -X POST http://localhost:8000/v1/telegram/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "search term",
+    "dialog_ids": [12345, 67890],
+    "limit": 50,
+    "credentials": {"api_id": 123456, "api_hash": "your_api_hash"}
+  }'
+```
+
+### 5. Disconnect from Telegram
+
+```bash
+curl -X POST http://localhost:8000/v1/telegram/disconnect \
+  -H "Content-Type: application/json" \
+  -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
+```
+
+## Security Notes
+
+- Store your API credentials securely
+- In production, restrict CORS origins in the API configuration
+- Consider implementing proper authentication for the API endpoints
