@@ -97,13 +97,15 @@ const Dashboard = () => {
       case 'dashboard':
         return (
           <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom>
+            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
               Welcome to T2M Dashboard
             </Typography>
             {loadingDialogs ? (
-              <Typography>Loading your Telegram data...</Typography>
+              <Typography sx={{ color: '#292929' }}>
+                Loading your Telegram data...
+              </Typography>
             ) : (
-              <Typography>
+              <Typography sx={{ color: '#292929' }}>
                 You have access to {dialogsCount} Telegram dialogs
               </Typography>
             )}
@@ -117,10 +119,10 @@ const Dashboard = () => {
       case 'metaTrader':
         return (
           <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom>
+            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
               Metatrader 5 Sync
             </Typography>
-            <Typography>
+            <Typography sx={{ color: '#292929' }}>
               Configure your Metatrader 5 integration settings here.
             </Typography>
           </Box>
@@ -128,10 +130,12 @@ const Dashboard = () => {
       case 'settings':
         return (
           <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom>
+            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
               Settings
             </Typography>
-            <Typography>Manage your application settings here.</Typography>
+            <Typography sx={{ color: '#292929' }}>
+              Manage your application settings here.
+            </Typography>
           </Box>
         );
       default:
