@@ -3,11 +3,14 @@ API endpoints for Telegram operations.
 """
 
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.schemas.telegram import TelegramCredentials, DialogResponse, MessageResponse, SearchRequest
 from app.services.telegram_service import TelegramService
+from app.services.db_service import DatabaseService
+from app.core.database import get_db
 
 # Dictionary to store active client sessions
 active_sessions = {}
@@ -78,7 +81,10 @@ async def cleanup_session(session_id: str) -> None:
 
 # --- API Endpoints ---
 @router.post("/connect", response_model=ConnectResponse)
-async def connect_to_telegram(credentials: TelegramCredentials):
+async def connect_to_telegram(
+    credentials: TelegramCredentials,
+    db: Session = Depends(get_db)
+):
     """Connect to Telegram using API credentials."""
     try:
         session_id = f"{credentials.api_id}_{credentials.api_hash}"
@@ -88,6 +94,11 @@ async def connect_to_telegram(credentials: TelegramCredentials):
             return ConnectResponse(success=True, needs_verification=True)
             
         service = await get_telegram_service(credentials)
+        
+        # Save the user's API ID to the database
+        db_service = DatabaseService(db)
+        db_service.create_user_if_not_exists(str(credentials.api_id))
+        
         return ConnectResponse(success=True)
     except HTTPException as e:
         if e.status_code == 401 and "verification code" in e.detail.lower():
@@ -97,7 +108,10 @@ async def connect_to_telegram(credentials: TelegramCredentials):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/verify_code", response_model=VerificationResponse)
-async def verify_code(verification_request: VerificationRequest):
+async def verify_code(
+    verification_request: VerificationRequest,
+    db: Session = Depends(get_db)
+):
     """Verify Telegram code sent to the user's phone."""
     credentials = verification_request.credentials
     session_id = f"{credentials.api_id}_{credentials.api_hash}"
@@ -121,6 +135,10 @@ async def verify_code(verification_request: VerificationRequest):
             # Move the service from pending to active
             active_sessions[session_id] = service
             del pending_verifications[session_id]
+            
+            # Save the user's API ID to the database
+            db_service = DatabaseService(db)
+            db_service.create_user_if_not_exists(str(credentials.api_id))
             
             return VerificationResponse(success=True)
         except Exception as e:

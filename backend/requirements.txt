@@ -2,4 +2,5 @@ telethon==1.28.5
 fastapi>=0.103.1,<1.0.0
 uvicorn>=0.23.2,<1.0.0
 pydantic>=2.4.0,<3.0.0
-python-dotenv>=1.0.0,<2.0.0 
+python-dotenv>=1.0.0,<2.0.0
+sqlalchemy>=2.0.0,<3.0.0 
