@@ -24,9 +24,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null
   );
 
-  // Load credentials from localStorage on initial mount
+  // Load credentials from sessionStorage on initial mount
   useEffect(() => {
-    const storedAuth = localStorage.getItem(AUTH_STORAGE_KEY);
+    const storedAuth = sessionStorage.getItem(AUTH_STORAGE_KEY);
     if (storedAuth) {
       try {
         const parsedAuth = JSON.parse(storedAuth);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(true);
       } catch (e) {
         console.error('Failed to parse stored credentials', e);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
+        sessionStorage.removeItem(AUTH_STORAGE_KEY);
       }
     }
   }, []);
@@ -42,15 +42,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userCredentials: TelegramCredentials) => {
     setCredentials(userCredentials);
     setIsAuthenticated(true);
-    // Store credentials in localStorage for persistence
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userCredentials));
+    // Store credentials in sessionStorage for persistence
+    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userCredentials));
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setCredentials(null);
-    // Remove credentials from localStorage
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    // Remove credentials from sessionStorage
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
   };
 
   return (
