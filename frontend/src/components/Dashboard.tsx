@@ -17,6 +17,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import telegramService from '../services/telegramService';
@@ -45,6 +46,9 @@ const Dashboard = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [dialogsCount, setDialogsCount] = useState<number>(0);
   const [loadingDialogs, setLoadingDialogs] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<
+    'dashboard' | 'metaTrader' | 'settings'
+  >('dashboard');
   const open = Boolean(anchorEl);
 
   useEffect(() => {
@@ -88,6 +92,53 @@ const Dashboard = () => {
     logout();
   };
 
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'dashboard':
+        return (
+          <Box sx={{ p: 2 }}>
+            <Typography variant='h4' gutterBottom>
+              Welcome to T2M Dashboard
+            </Typography>
+            {loadingDialogs ? (
+              <Typography>Loading your Telegram data...</Typography>
+            ) : (
+              <Typography>
+                You have access to {dialogsCount} Telegram dialogs
+              </Typography>
+            )}
+            {credentials && (
+              <Typography variant='body2' color='text.secondary' sx={{ mt: 2 }}>
+                Connected with API ID: {credentials.api_id}
+              </Typography>
+            )}
+          </Box>
+        );
+      case 'metaTrader':
+        return (
+          <Box sx={{ p: 2 }}>
+            <Typography variant='h4' gutterBottom>
+              Metatrader 5 Sync
+            </Typography>
+            <Typography>
+              Configure your Metatrader 5 integration settings here.
+            </Typography>
+          </Box>
+        );
+      case 'settings':
+        return (
+          <Box sx={{ p: 2 }}>
+            <Typography variant='h4' gutterBottom>
+              Settings
+            </Typography>
+            <Typography>Manage your application settings here.</Typography>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -113,19 +164,32 @@ const Dashboard = () => {
         <Box sx={{ mb: 2 }}>
           <ListItem
             button
-            selected
+            selected={activeSection === 'dashboard'}
+            onClick={() => setActiveSection('dashboard')}
             sx={{
               borderRadius: '10px',
               mb: 1,
-              backgroundColor: '#292929',
-              color: '#ffffff',
+              backgroundColor:
+                activeSection === 'dashboard' ? '#292929' : 'transparent',
+              color: activeSection === 'dashboard' ? '#ffffff' : 'inherit',
               '&:hover': {
-                backgroundColor: '#3a3a3a',
+                backgroundColor:
+                  activeSection === 'dashboard'
+                    ? '#3a3a3a'
+                    : 'rgba(0, 0, 0, 0.05)',
               },
               py: 1.5,
             }}
           >
-            <ListItemIcon sx={{ color: '#ffffff', minWidth: '40px' }}>
+            <ListItemIcon
+              sx={{
+                color:
+                  activeSection === 'dashboard'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
+                minWidth: '40px',
+              }}
+            >
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText
@@ -133,7 +197,53 @@ const Dashboard = () => {
               primaryTypographyProps={{
                 fontWeight: 'medium',
                 fontSize: '0.9rem',
-                color: '#ffffff',
+                color:
+                  activeSection === 'dashboard'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
+              }}
+            />
+          </ListItem>
+
+          <ListItem
+            button
+            selected={activeSection === 'metaTrader'}
+            onClick={() => setActiveSection('metaTrader')}
+            sx={{
+              borderRadius: '10px',
+              mb: 1,
+              backgroundColor:
+                activeSection === 'metaTrader' ? '#292929' : 'transparent',
+              color: activeSection === 'metaTrader' ? '#ffffff' : 'inherit',
+              '&:hover': {
+                backgroundColor:
+                  activeSection === 'metaTrader'
+                    ? '#3a3a3a'
+                    : 'rgba(0, 0, 0, 0.05)',
+              },
+              py: 1.5,
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                color:
+                  activeSection === 'metaTrader'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
+                minWidth: '40px',
+              }}
+            >
+              <SyncAltIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='Metatrader 5 Sync'
+              primaryTypographyProps={{
+                fontWeight: 'medium',
+                fontSize: '0.9rem',
+                color:
+                  activeSection === 'metaTrader'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
               }}
             />
           </ListItem>
@@ -143,16 +253,30 @@ const Dashboard = () => {
         <Box sx={{ mt: 'auto' }}>
           <ListItem
             button
+            selected={activeSection === 'settings'}
+            onClick={() => setActiveSection('settings')}
             sx={{
               borderRadius: '10px',
+              backgroundColor:
+                activeSection === 'settings' ? '#292929' : 'transparent',
+              color: activeSection === 'settings' ? '#ffffff' : 'inherit',
               '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                backgroundColor:
+                  activeSection === 'settings'
+                    ? '#3a3a3a'
+                    : 'rgba(0, 0, 0, 0.05)',
               },
               py: 1.5,
             }}
           >
             <ListItemIcon
-              sx={{ minWidth: '40px', color: 'rgba(0, 0, 0, 0.6)' }}
+              sx={{
+                minWidth: '40px',
+                color:
+                  activeSection === 'settings'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
+              }}
             >
               <SettingsIcon fontSize='small' />
             </ListItemIcon>
@@ -161,7 +285,10 @@ const Dashboard = () => {
               primaryTypographyProps={{
                 fontWeight: 'medium',
                 fontSize: '0.9rem',
-                color: 'rgba(0, 0, 0, 0.6)',
+                color:
+                  activeSection === 'settings'
+                    ? '#ffffff'
+                    : 'rgba(0, 0, 0, 0.6)',
               }}
             />
           </ListItem>
@@ -233,7 +360,7 @@ const Dashboard = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem>
+            <MenuItem onClick={() => setActiveSection('settings')}>
               <SettingsIcon fontSize='small' />
               Settings
             </MenuItem>
@@ -245,23 +372,7 @@ const Dashboard = () => {
           </Menu>
         </Box>
 
-        <Box sx={{ p: 2 }}>
-          <Typography variant='h4' gutterBottom>
-            Welcome to T2M Dashboard
-          </Typography>
-          {loadingDialogs ? (
-            <Typography>Loading your Telegram data...</Typography>
-          ) : (
-            <Typography>
-              You have access to {dialogsCount} Telegram dialogs
-            </Typography>
-          )}
-          {credentials && (
-            <Typography variant='body2' color='text.secondary' sx={{ mt: 2 }}>
-              Connected with API ID: {credentials.api_id}
-            </Typography>
-          )}
-        </Box>
+        {renderContent()}
       </MainContentContainer>
     </Box>
   );

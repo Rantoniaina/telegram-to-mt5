@@ -179,6 +179,12 @@ const SignIn = () => {
   const isFormValid =
     apiId.trim() !== '' && apiHash.trim() !== '' && phone.trim() !== '';
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && isFormValid && !loading) {
+      handleSubmit();
+    }
+  };
+
   // Render verification code screen if needed
   if (authStep === AuthStep.VERIFICATION_CODE && credentials) {
     return (
@@ -208,6 +214,7 @@ const SignIn = () => {
           p: 4,
           borderRadius: 2,
         }}
+        onKeyDown={handleKeyDown}
       >
         <Box
           sx={{

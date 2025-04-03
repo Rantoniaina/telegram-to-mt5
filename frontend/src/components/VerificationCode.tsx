@@ -119,6 +119,12 @@ const VerificationCode = ({
     ? verificationCode.trim() !== '' && password.trim() !== ''
     : verificationCode.trim() !== '';
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && isFormValid && !loading) {
+      handleSubmit();
+    }
+  };
+
   return (
     <Container
       maxWidth='sm'
@@ -137,6 +143,7 @@ const VerificationCode = ({
           p: 4,
           borderRadius: 2,
         }}
+        onKeyDown={handleKeyDown}
       >
         <Box
           sx={{
