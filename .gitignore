@@ -19,3 +19,45 @@ target/
 DEVELOPMENT.MD
 
 ideas/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Database
+db/
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+backend/.env
+
+# Telegram session files
+*.session
+*.session-journal
+
+# Virtual environments
+venv/
+backend/venv/
+
+# OS specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
