@@ -11,6 +11,7 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Container,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -39,6 +40,28 @@ const MainContentContainer = styled(Box)(({ theme }) => ({
   backgroundColor: 'transparent',
   overflow: 'auto',
   height: '100%',
+}));
+
+// Create Card styled component
+const CreateCard = styled(Paper)(({ theme }) => ({
+  width: '180px',
+  height: '180px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '16px',
+  border: '2px dashed rgba(0, 0, 0, 0.15)',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  position: 'relative',
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 15px rgba(0, 0, 0, 0.05)',
+  },
 }));
 
 const Dashboard = () => {
@@ -92,6 +115,12 @@ const Dashboard = () => {
     logout();
   };
 
+  const handleCreateClick = () => {
+    // This function will handle the create card click
+    console.log('Create card clicked');
+    // You can add your logic here, such as opening a modal or redirecting to another page
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -122,9 +151,45 @@ const Dashboard = () => {
             <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
               Metatrader 5 Sync
             </Typography>
-            <Typography sx={{ color: '#292929' }}>
+            <Typography sx={{ color: '#292929', mb: 4 }}>
               Configure your Metatrader 5 integration settings here.
             </Typography>
+
+            {/* Cards section */}
+            <Container maxWidth='lg' sx={{ mt: 4, p: 0, ml: 0 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 3,
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                }}
+              >
+                {/* Create Card */}
+                <CreateCard onClick={handleCreateClick}>
+                  <AddIcon
+                    sx={{
+                      fontSize: 40,
+                      color: '#292929',
+                      mb: 1,
+                      opacity: 0.8,
+                    }}
+                  />
+                  <Typography
+                    variant='h6'
+                    sx={{
+                      color: '#292929',
+                      fontWeight: 500,
+                      textAlign: 'center',
+                      fontSize: '1rem',
+                      opacity: 0.8,
+                    }}
+                  >
+                    Create
+                  </Typography>
+                </CreateCard>
+              </Box>
+            </Container>
           </Box>
         );
       case 'settings':
