@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import router as v1_router
 from app.api.v1.telegram import active_sessions
 from app.config.settings import settings
+from app.core.database import init_db
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -20,8 +21,13 @@ async def lifespan(app: FastAPI):
     Lifespan events for the FastAPI application.
     Manages startup and shutdown events.
     """
-    # Startup: Nothing to do here
+    # Startup: Initialize the database
+    logger.info("Initializing database...")
+    init_db()
+    logger.info("Database initialized successfully")
+    
     yield
+    
     # Shutdown: Disconnect all active Telegram sessions
     for session_id, service in active_sessions.items():
         await service.disconnect()
