@@ -268,7 +268,7 @@ const Dashboard = () => {
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText
-              primary='Dashboard'
+              primary={t('common.dashboard')}
               primaryTypographyProps={{
                 fontWeight: 'medium',
                 fontSize: '0.9rem',
@@ -313,7 +313,7 @@ const Dashboard = () => {
               <SyncAltIcon />
             </ListItemIcon>
             <ListItemText
-              primary='Metatrader 5 Sync'
+              primary={t('metatrader.title')}
               primaryTypographyProps={{
                 fontWeight: 'medium',
                 fontSize: '0.9rem',
@@ -360,7 +360,7 @@ const Dashboard = () => {
               <SettingsIcon fontSize='small' />
             </ListItemIcon>
             <ListItemText
-              primary='Settings'
+              primary={t('settings.title')}
               primaryTypographyProps={{
                 fontWeight: 'medium',
                 fontSize: '0.9rem',
@@ -400,7 +400,7 @@ const Dashboard = () => {
               px: 3,
             }}
           >
-            Create
+            {t('common.create')}
           </Button>
           <IconButton onClick={handleClick}>
             <Avatar
