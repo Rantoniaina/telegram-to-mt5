@@ -129,7 +129,7 @@ const SignIn = () => {
         setSuccess(true);
         setAuthStep(AuthStep.COMPLETE);
         // Redirect to dashboard
-        login();
+        login(credentialsObj);
       }
     } catch (err) {
       console.error('Failed to connect to Telegram:', err);
@@ -159,7 +159,9 @@ const SignIn = () => {
     setSuccess(true);
     setAuthStep(AuthStep.COMPLETE);
     // Redirect to dashboard after successful authentication
-    login();
+    if (credentials) {
+      login(credentials);
+    }
   };
 
   const handleBackToCredentials = () => {

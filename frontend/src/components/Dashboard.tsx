@@ -17,7 +17,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import telegramService from '../services/telegramService';
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
   height: '100%',
@@ -39,8 +41,30 @@ const MainContentContainer = styled(Box)(({ theme }) => ({
 }));
 
 const Dashboard = () => {
+  const { logout, credentials } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [dialogsCount, setDialogsCount] = useState<number>(0);
+  const [loadingDialogs, setLoadingDialogs] = useState<boolean>(false);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    // Get dialogs count if credentials are available
+    if (credentials) {
+      const fetchDialogs = async () => {
+        try {
+          setLoadingDialogs(true);
+          const dialogs = await telegramService.getDialogs(credentials);
+          setDialogsCount(dialogs.length);
+        } catch (error) {
+          console.error('Failed to fetch dialogs:', error);
+        } finally {
+          setLoadingDialogs(false);
+        }
+      };
+
+      fetchDialogs();
+    }
+  }, [credentials]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -48,6 +72,20 @@ const Dashboard = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    if (credentials) {
+      try {
+        // Disconnect from Telegram
+        await telegramService.disconnect(credentials);
+      } catch (error) {
+        console.error('Error disconnecting from Telegram:', error);
+      }
+    }
+
+    // Call the logout function from auth context to clear stored credentials
+    logout();
   };
 
   return (
@@ -200,7 +238,7 @@ const Dashboard = () => {
               Settings
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem>
+            <MenuItem onClick={handleLogout}>
               <LogoutIcon fontSize='small' />
               Log out
             </MenuItem>
@@ -211,6 +249,18 @@ const Dashboard = () => {
           <Typography variant='h4' gutterBottom>
             Welcome to T2M Dashboard
           </Typography>
+          {loadingDialogs ? (
+            <Typography>Loading your Telegram data...</Typography>
+          ) : (
+            <Typography>
+              You have access to {dialogsCount} Telegram dialogs
+            </Typography>
+          )}
+          {credentials && (
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 2 }}>
+              Connected with API ID: {credentials.api_id}
+            </Typography>
+          )}
         </Box>
       </MainContentContainer>
     </Box>
