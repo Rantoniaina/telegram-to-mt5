@@ -1,6 +1,16 @@
 {
     "common": {
-        "back": "Back"
+        "back": "Back",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "cancel": "Cancel",
+        "save": "Save",
+        "continue": "Continue",
+        "create": "Create",
+        "logout": "Log out",
+        "settings": "Settings",
+        "dashboard": "Dashboard"
     },
     "signIn": {
         "title": "Sign in",
@@ -48,6 +58,40 @@
         "codePrompt": "Enter the verification code sent to your phone",
         "passwordPrompt": "Enter your two-step verification password",
         "passwordRequired": "Two-step verification password is required",
-        "verificationError": "Verification failed"
+        "verificationError": "Verification failed",
+        "authComplete": "Authentication complete",
+        "redirecting": "Redirecting to dashboard..."
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome to T2M Dashboard",
+        "telegram": {
+            "loading": "Loading your Telegram data...",
+            "dialogsCount": "You have access to {{count}} Telegram dialogs",
+            "connected": "Connected with API ID: {{apiId}}"
+        },
+        "noChats": "No chats available",
+        "loadingChats": "Loading chats...",
+        "search": "Search chats"
+    },
+    "metatrader": {
+        "title": "Metatrader 5 Sync",
+        "description": "Configure your Metatrader 5 integration settings here."
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your application settings here.",
+        "language": "Language",
+        "theme": "Theme",
+        "notification": "Notifications",
+        "account": "Account",
+        "logout": "Log out"
+    },
+    "language": {
+        "english": "English",
+        "french": "Français"
+    },
+    "app": {
+        "name": "T2M"
     }
 }

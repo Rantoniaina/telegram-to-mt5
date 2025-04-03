@@ -1,6 +1,16 @@
 {
     "common": {
-        "back": "Retour"
+        "back": "Retour",
+        "loading": "Chargement...",
+        "error": "Erreur",
+        "success": "Succès",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "continue": "Continuer",
+        "create": "Créer",
+        "logout": "Déconnexion",
+        "settings": "Paramètres",
+        "dashboard": "Tableau de bord"
     },
     "signIn": {
         "title": "Connexion",
@@ -48,6 +58,40 @@
         "codePrompt": "Entrez le code de vérification envoyé à votre téléphone",
         "passwordPrompt": "Entrez votre mot de passe de vérification en deux étapes",
         "passwordRequired": "Le mot de passe de vérification en deux étapes est requis",
-        "verificationError": "Échec de la vérification"
+        "verificationError": "Échec de la vérification",
+        "authComplete": "Authentification terminée",
+        "redirecting": "Redirection vers le tableau de bord..."
+    },
+    "dashboard": {
+        "title": "Tableau de bord",
+        "welcome": "Bienvenue sur le tableau de bord T2M",
+        "telegram": {
+            "loading": "Chargement de vos données Telegram...",
+            "dialogsCount": "Vous avez accès à {{count}} conversations Telegram",
+            "connected": "Connecté avec l'ID API: {{apiId}}"
+        },
+        "noChats": "Aucune conversation disponible",
+        "loadingChats": "Chargement des conversations...",
+        "search": "Rechercher des conversations"
+    },
+    "metatrader": {
+        "title": "Synchronisation Metatrader 5",
+        "description": "Configurez vos paramètres d'intégration Metatrader 5 ici."
+    },
+    "settings": {
+        "title": "Paramètres",
+        "description": "Gérez vos paramètres d'application ici.",
+        "language": "Langue",
+        "theme": "Thème",
+        "notification": "Notifications",
+        "account": "Compte",
+        "logout": "Déconnexion"
+    },
+    "language": {
+        "english": "English",
+        "french": "Français"
+    },
+    "app": {
+        "name": "T2M"
     }
 }

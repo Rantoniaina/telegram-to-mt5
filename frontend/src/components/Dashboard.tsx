@@ -22,6 +22,7 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import telegramService from '../services/telegramService';
+import { useTranslation } from 'react-i18next';
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
   height: '100%',
@@ -65,6 +66,7 @@ const CreateCard = styled(Paper)(({ theme }) => ({
 }));
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { logout, credentials } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [dialogsCount, setDialogsCount] = useState<number>(0);
@@ -127,20 +129,22 @@ const Dashboard = () => {
         return (
           <Box sx={{ p: 2 }}>
             <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              Welcome to T2M Dashboard
+              {t('dashboard.welcome')}
             </Typography>
             {loadingDialogs ? (
               <Typography sx={{ color: '#292929' }}>
-                Loading your Telegram data...
+                {t('dashboard.telegram.loading')}
               </Typography>
             ) : (
               <Typography sx={{ color: '#292929' }}>
-                You have access to {dialogsCount} Telegram dialogs
+                {t('dashboard.telegram.dialogsCount', { count: dialogsCount })}
               </Typography>
             )}
             {credentials && (
               <Typography variant='body2' color='text.secondary' sx={{ mt: 2 }}>
-                Connected with API ID: {credentials.api_id}
+                {t('dashboard.telegram.connected', {
+                  apiId: credentials.api_id,
+                })}
               </Typography>
             )}
           </Box>
@@ -149,10 +153,10 @@ const Dashboard = () => {
         return (
           <Box sx={{ p: 2 }}>
             <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              Metatrader 5 Sync
+              {t('metatrader.title')}
             </Typography>
             <Typography sx={{ color: '#292929', mb: 4 }}>
-              Configure your Metatrader 5 integration settings here.
+              {t('metatrader.description')}
             </Typography>
 
             {/* Cards section */}
@@ -185,7 +189,7 @@ const Dashboard = () => {
                       opacity: 0.8,
                     }}
                   >
-                    Create
+                    {t('common.create')}
                   </Typography>
                 </CreateCard>
               </Box>
@@ -196,10 +200,10 @@ const Dashboard = () => {
         return (
           <Box sx={{ p: 2 }}>
             <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              Settings
+              {t('settings.title')}
             </Typography>
             <Typography sx={{ color: '#292929' }}>
-              Manage your application settings here.
+              {t('settings.description')}
             </Typography>
           </Box>
         );
@@ -225,7 +229,7 @@ const Dashboard = () => {
         {/* Logo text */}
         <Box sx={{ p: 1, mb: 4, textAlign: 'center' }}>
           <Typography variant='h5' fontWeight='bold' color='#000000'>
-            T2M
+            {t('app.name')}
           </Typography>
         </Box>
 
@@ -436,13 +440,13 @@ const Dashboard = () => {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
             <MenuItem onClick={() => setActiveSection('settings')}>
-              <SettingsIcon fontSize='small' />
-              Settings
+              <SettingsIcon sx={{ mr: 2 }} />
+              {t('settings.title')}
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
             <MenuItem onClick={handleLogout}>
-              <LogoutIcon fontSize='small' />
-              Log out
+              <LogoutIcon sx={{ mr: 2 }} />
+              {t('common.logout')}
             </MenuItem>
           </Menu>
         </Box>
