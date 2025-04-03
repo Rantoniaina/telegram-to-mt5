@@ -170,7 +170,9 @@ const Dashboard = () => {
               borderRadius: '10px',
               mb: 1,
               backgroundColor:
-                activeSection === 'dashboard' ? '#292929' : 'transparent',
+                activeSection === 'dashboard'
+                  ? '#292929 !important'
+                  : 'transparent',
               color: activeSection === 'dashboard' ? '#ffffff' : 'inherit',
               '&:hover': {
                 backgroundColor:
@@ -213,7 +215,9 @@ const Dashboard = () => {
               borderRadius: '10px',
               mb: 1,
               backgroundColor:
-                activeSection === 'metaTrader' ? '#292929' : 'transparent',
+                activeSection === 'metaTrader'
+                  ? '#292929 !important'
+                  : 'transparent',
               color: activeSection === 'metaTrader' ? '#ffffff' : 'inherit',
               '&:hover': {
                 backgroundColor:
@@ -258,7 +262,9 @@ const Dashboard = () => {
             sx={{
               borderRadius: '10px',
               backgroundColor:
-                activeSection === 'settings' ? '#292929' : 'transparent',
+                activeSection === 'settings'
+                  ? '#292929 !important'
+                  : 'transparent',
               color: activeSection === 'settings' ? '#ffffff' : 'inherit',
               '&:hover': {
                 backgroundColor:
