@@ -22,6 +22,8 @@ module.exports = {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         // Handle image imports (if needed)
         '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+        // Mock Vite's import.meta.env
+        '^@/(.*)$': '<rootDir>/src/$1',
     },
 
     // Automatically mock services directory
@@ -37,4 +39,18 @@ module.exports = {
 
     // Test match patterns
     testMatch: ['<rootDir>/src/**/__tests__/**/*.[jt]s?(x)', '<rootDir>/src/**/*.{spec,test}.[jt]s?(x)'],
+
+    // Provide global variables to Jest
+    globals: {
+        'import.meta': {
+            env: {
+                VITE_API_URL: 'http://localhost:8000/v1',
+            },
+        },
+    },
+
+    // Resolve problematic modules
+    transformIgnorePatterns: [
+        '/node_modules/(?!(@mui|@babel|react)).+\\.js$'
+    ],
 }; 
