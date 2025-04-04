@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -16,12 +16,12 @@ import {
 import { styled } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './LanguageSwitcher';
-import telegramService from '../services/telegramService';
-import { ApiError } from '../services/apiService';
-import { TelegramCredentials } from '../types/telegram';
-import VerificationCode from './VerificationCode';
-import { useAuth } from '../context/AuthContext';
+import { TelegramCredentials } from '../../types/telegram';
+import { useAuth } from '../../context/AuthContext';
+import { ApiError } from '../../services/apiService';
+import telegramService from '../../services/telegramService';
+import LanguageSwitcher from '../LanguageSwitcher';
+import VerificationCode from '../VerificationCode';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),

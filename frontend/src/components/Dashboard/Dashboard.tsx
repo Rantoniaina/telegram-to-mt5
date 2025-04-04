@@ -20,9 +20,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import telegramService from '../services/telegramService';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/AuthContext';
+import telegramService from '../../services/telegramService';
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
   height: '100%',
