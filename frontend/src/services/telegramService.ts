@@ -7,8 +7,7 @@ import {
   TelegramCredentials, 
   Dialog, 
   Message, 
-  SearchRequest, 
-  ApiResponse 
+  SearchRequest
 } from '../types/telegram';
 
 // Endpoints

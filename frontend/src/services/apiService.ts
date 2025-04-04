@@ -1,9 +1,3 @@
-/**
- * Base API Service for making HTTP requests to the backend.
- */
-
-import { ApiResponse } from '../types/telegram';
-
 // API configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
 
