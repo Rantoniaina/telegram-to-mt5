@@ -1,8 +1,8 @@
-# Telegram API Service
+# 📱 Telegram API Service
 
-A RESTful API service that connects to Telegram using API credentials and retrieves discussions, messages, and other data.
+A RESTful API service that connects to Telegram using API credentials and retrieves discussions, messages, and other data. Stores session data for better performance.
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 backend/
@@ -10,36 +10,48 @@ backend/
 │   ├── api/             # API endpoints
 │   │   ├── v1/          # API version 1
 │   │   │   ├── router.py    # Main API router
-│   │   │   └── telegram.py  # Telegram endpoints
+│   │   │   ├── telegram.py  # Telegram endpoints
+│   │   │   └── db.py        # Database endpoints
 │   ├── config/          # Configuration
 │   │   └── settings.py  # App settings
 │   ├── core/            # Core functionality
-│   │   └── app_factory.py  # FastAPI app factory
+│   │   ├── app_factory.py  # FastAPI app factory
+│   │   ├── database.py     # Database connection
+│   │   └── compat.py       # Compatibility fixes
+│   ├── models/          # SQLAlchemy models
+│   │   └── telegram_data.py  # Telegram data models
 │   ├── schemas/         # Pydantic models
 │   │   └── telegram.py  # Telegram schemas
 │   ├── services/        # Business logic services
-│   │   └── telegram_service.py  # Telegram service
+│   │   ├── telegram_service.py  # Telegram service
+│   │   └── db_service.py        # Database service
 │   └── main.py          # Application entry point
+├── db/                  # Database files
+│   └── app.db           # SQLite database
 ├── requirements.txt     # Dependencies
+├── requirements-test.txt  # Testing dependencies
 └── run.py               # Script to run the server
 ```
 
-## Features
+## ✨ Features
 
-- Connect to Telegram using API ID and API hash
-- Retrieve all dialogs (chats, channels, groups)
-- Get messages from specific dialogs
-- Search for messages across dialogs
-- Session management for multiple clients
+- 🔑 Connect to Telegram using API ID and API hash
+- 💬 Retrieve all dialogs (chats, channels, groups)
+- 📨 Get messages from specific dialogs
+- 🔍 Search for messages across dialogs
+- 📱 Verification code and 2FA password support
+- 💾 Session management for multiple clients
+- 🗄️ Store data in SQLite database
 
-## Requirements
+## 📋 Requirements
 
 - Python 3.7+
 - Telethon library for Telegram API access
 - FastAPI for the REST API
+- SQLAlchemy for database operations
 - Other dependencies listed in `requirements.txt`
 
-## Setup
+## 🚀 Setup
 
 1. Install dependencies:
 
@@ -67,7 +79,7 @@ HOST=0.0.0.0
 DEBUG=True
 ```
 
-## Running the API Server
+## 🏃‍♂️ Running the API Server
 
 ```bash
 # Method 1: Run directly
@@ -79,7 +91,7 @@ python -m app.main
 
 The server will start on http://localhost:8000 by default. You can access the interactive API documentation at http://localhost:8000/docs.
 
-## API Usage
+## 🔌 API Usage
 
 ### 1. Connect to Telegram
 
@@ -89,7 +101,19 @@ curl -X POST http://localhost:8000/v1/telegram/connect \
   -d '{"api_id": 123456, "api_hash": "your_api_hash", "phone": "+1234567890"}'
 ```
 
-### 2. Get Dialogs (Chats, Channels, Groups)
+### 2. Verify Code (if required)
+
+```bash
+curl -X POST http://localhost:8000/v1/telegram/verify_code \
+  -H "Content-Type: application/json" \
+  -d '{
+    "credentials": {"api_id": 123456, "api_hash": "your_api_hash", "phone": "+1234567890"},
+    "code": "12345",
+    "password": "your_2fa_password"  # Optional, only if 2FA is enabled
+  }'
+```
+
+### 3. Get Dialogs (Chats, Channels, Groups)
 
 ```bash
 curl -X POST http://localhost:8000/v1/telegram/dialogs \
@@ -97,7 +121,7 @@ curl -X POST http://localhost:8000/v1/telegram/dialogs \
   -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
 ```
 
-### 3. Get Messages from a Dialog
+### 4. Get Messages from a Dialog
 
 ```bash
 curl -X POST "http://localhost:8000/v1/telegram/messages/12345?limit=50" \
@@ -105,7 +129,7 @@ curl -X POST "http://localhost:8000/v1/telegram/messages/12345?limit=50" \
   -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
 ```
 
-### 4. Search Messages
+### 5. Search Messages
 
 ```bash
 curl -X POST http://localhost:8000/v1/telegram/search \
@@ -118,7 +142,7 @@ curl -X POST http://localhost:8000/v1/telegram/search \
   }'
 ```
 
-### 5. Disconnect from Telegram
+### 6. Disconnect from Telegram
 
 ```bash
 curl -X POST http://localhost:8000/v1/telegram/disconnect \
@@ -126,8 +150,9 @@ curl -X POST http://localhost:8000/v1/telegram/disconnect \
   -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
 ```
 
-## Security Notes
+## 🔒 Security Notes
 
 - Store your API credentials securely
 - In production, restrict CORS origins in the API configuration
 - Consider implementing proper authentication for the API endpoints
+- The application uses SQLite by default; consider using a more robust database for production
