@@ -13,10 +13,10 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './LanguageSwitcher';
-import telegramService from '../services/telegramService';
-import { ApiError } from '../services/apiService';
-import { TelegramCredentials } from '../types/telegram';
+import { ApiError } from '../../services/apiService';
+import telegramService from '../../services/telegramService';
+import { TelegramCredentials } from '../../types/telegram';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -119,6 +119,12 @@ const VerificationCode = ({
     ? verificationCode.trim() !== '' && password.trim() !== ''
     : verificationCode.trim() !== '';
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && isFormValid && !loading) {
+      handleSubmit();
+    }
+  };
+
   return (
     <Container
       maxWidth='sm'
@@ -137,6 +143,7 @@ const VerificationCode = ({
           p: 4,
           borderRadius: 2,
         }}
+        onKeyDown={handleKeyDown}
       >
         <Box
           sx={{

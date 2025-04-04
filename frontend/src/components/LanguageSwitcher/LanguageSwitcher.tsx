@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageIcon from '@mui/icons-material/Language';
 
 const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -56,7 +56,7 @@ const LanguageSwitcher = () => {
             },
           }}
         >
-          English
+          {t('language.english')}
         </MenuItem>
         <MenuItem
           onClick={() => changeLanguage('fr')}
@@ -67,7 +67,7 @@ const LanguageSwitcher = () => {
             },
           }}
         >
-          Français
+          {t('language.french')}
         </MenuItem>
       </Menu>
     </div>

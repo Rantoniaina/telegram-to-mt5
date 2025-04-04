@@ -22,6 +22,8 @@ wheels/
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -52,10 +54,13 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+coverage/
 
 # VS Code
 .vscode/
 *.code-workspace
+!.vscode/settings.json
+!.vscode/extensions.json
 
 # PyCharm
 .idea/
@@ -67,6 +72,7 @@ coverage.xml
 *.db
 *.sqlite
 *.sqlite3
+db/
 
 # Local development settings
 local_settings.py
@@ -76,4 +82,13 @@ local_settings.py
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-$RECYCLE.BIN/ 
+$RECYCLE.BIN/
+
+# Misc
+.temp/
+.tmp/
+temp/
+tmp/
+
+# API documentation
+docs/_build/ 

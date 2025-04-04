@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -16,11 +16,12 @@ import {
 import { styled } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './LanguageSwitcher';
-import telegramService from '../services/telegramService';
-import { ApiError } from '../services/apiService';
-import { TelegramCredentials } from '../types/telegram';
-import VerificationCode from './VerificationCode';
+import { TelegramCredentials } from '../../types/telegram';
+import { useAuth } from '../../context/AuthContext';
+import { ApiError } from '../../services/apiService';
+import telegramService from '../../services/telegramService';
+import LanguageSwitcher from '../LanguageSwitcher';
+import VerificationCode from '../VerificationCode';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -52,6 +53,7 @@ enum AuthStep {
 
 const SignIn = () => {
   const { t } = useTranslation();
+  const { login } = useAuth();
   const [apiId, setApiId] = useState('');
   const [apiHash, setApiHash] = useState('');
   const [phone, setPhone] = useState('');
@@ -126,6 +128,8 @@ const SignIn = () => {
         // Authentication complete without verification needed
         setSuccess(true);
         setAuthStep(AuthStep.COMPLETE);
+        // Redirect to dashboard
+        login(credentialsObj);
       }
     } catch (err) {
       console.error('Failed to connect to Telegram:', err);
@@ -154,6 +158,10 @@ const SignIn = () => {
   const handleVerificationSuccess = () => {
     setSuccess(true);
     setAuthStep(AuthStep.COMPLETE);
+    // Redirect to dashboard after successful authentication
+    if (credentials) {
+      login(credentials);
+    }
   };
 
   const handleBackToCredentials = () => {
@@ -170,6 +178,12 @@ const SignIn = () => {
 
   const isFormValid =
     apiId.trim() !== '' && apiHash.trim() !== '' && phone.trim() !== '';
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && isFormValid && !loading) {
+      handleSubmit();
+    }
+  };
 
   // Render verification code screen if needed
   if (authStep === AuthStep.VERIFICATION_CODE && credentials) {
@@ -200,6 +214,7 @@ const SignIn = () => {
           p: 4,
           borderRadius: 2,
         }}
+        onKeyDown={handleKeyDown}
       >
         <Box
           sx={{
