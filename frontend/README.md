@@ -1,54 +1,97 @@
-# React + TypeScript + Vite
+# 🚀 Telegram to MT5 Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a modern React application built with TypeScript and Vite that serves as the frontend for the Telegram to MT5 integration.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔒 User authentication system with verification
+- 🌍 Internationalization support with i18next
+- 🎨 Material UI components with custom theming
+- 📱 Responsive design
+- ✅ Testing setup with Jest and React Testing Library
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Framework**: React 17
+- **UI Library**: Material UI
+- **Styling**: Emotion
+- **State Management**: React Context API
+- **Internationalization**: i18next
+- **Build Tool**: Vite
+- **Testing**: Jest, React Testing Library
+- **Language**: TypeScript
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (version 14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Navigate to the frontend directory
+3. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
+4. Copy the environment file and configure it:
+   ```bash
+   cp .env.example .env
+   ```
+5. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+## 📝 Available Scripts
+
+- `npm run dev` - Start the development server
+- `npm run build` - Build the application for production
+- `npm run lint` - Run ESLint to check for code issues
+- `npm run preview` - Preview the production build locally
+- `npm run test` - Run Jest tests
+
+## 🔧 Project Structure
+
+```
+src/
+  ├── assets/           # Static assets like images
+  ├── components/       # Reusable UI components
+  ├── context/          # React Context providers
+  ├── i18n/             # Internationalization configuration
+  ├── services/         # API service functions
+  ├── types/            # TypeScript type definitions
+  ├── __tests__/        # Test files
+  ├── App.tsx           # Main application component
+  ├── main.tsx          # Application entry point
+  ├── theme.ts          # Material UI theme configuration
+  └── index.css         # Global styles
+```
+
+## 🧩 ESLint Configuration
+
+This project uses ESLint for code quality. For production applications, it's recommended to enable type-aware lint rules:
 
 ```js
 export default tseslint.config({
   extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
     ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
+    // For stricter rules, use:
+    // ...tseslint.configs.strictTypeChecked,
+    // For stylistic rules, add:
+    // ...tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
-    // other options...
     parserOptions: {
       project: ['./tsconfig.node.json', './tsconfig.app.json'],
       tsconfigRootDir: import.meta.dirname,
     },
   },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+});
 ```
