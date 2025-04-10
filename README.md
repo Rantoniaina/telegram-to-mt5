@@ -46,7 +46,24 @@ The application consists of two main parts:
 - Python 3.7+
 - Telegram API credentials (API ID and hash)
 
-### Frontend Setup
+### Quick Start
+
+The easiest way to get started is to use the provided initialization script:
+
+```bash
+./init.sh
+```
+
+This script will:
+
+- Set up the Python virtual environment for the backend
+- Install all required dependencies
+- Start both the backend and frontend servers
+- Handle cleanup when terminated (Ctrl+C)
+
+### Manual Setup
+
+#### Frontend Setup
 
 1. Navigate to the frontend directory
 2. Install dependencies:
@@ -62,7 +79,7 @@ The application consists of two main parts:
    npm run dev
    ```
 
-### Backend Setup
+#### Backend Setup
 
 1. Navigate to the backend directory
 2. Install dependencies:
@@ -89,6 +106,10 @@ The application consists of two main parts:
    ```
 
 ## 📝 Available Scripts
+
+### Project-wide
+
+- `./init.sh` - Initialize and start both backend and frontend servers
 
 ### Frontend
 
