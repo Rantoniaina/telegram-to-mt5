@@ -11,6 +11,7 @@ from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.core.database import Base, get_db
 from app.models.telegram_data import User
+from app.models.sync import Sync
 
 # Setup in-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -54,7 +55,8 @@ def db_session():
     db = TestingSessionLocal()
     
     try:
-        # Clear all data before each test
+        # Clear all data before each test - order matters due to foreign key constraints
+        db.query(Sync).delete()
         db.query(User).delete()
         db.commit()
         
