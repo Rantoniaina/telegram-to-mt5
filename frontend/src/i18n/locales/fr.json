@@ -93,5 +93,31 @@
     },
     "app": {
         "name": "T2M"
+    },
+    "sync": {
+        "create": {
+            "title": "Créer une nouvelle synchronisation",
+            "selectDialog": "Sélectionnez une conversation Telegram à synchroniser",
+            "syncName": "Nom de la synchronisation",
+            "syncState": "État initial",
+            "noDialogsFound": "Aucune conversation trouvée. Assurez-vous d'être connecté à Telegram.",
+            "syncNameReadOnly": "Le nom de la synchronisation doit correspondre au nom de la conversation et ne peut pas être modifié"
+        },
+        "state": {
+            "ACTIVE": "Actif",
+            "PAUSED": "En pause",
+            "ERROR": "Erreur",
+            "STOPPED": "Arrêté"
+        },
+        "actions": {
+            "start": "Démarrer la synchronisation",
+            "stop": "Arrêter la synchronisation",
+            "delete": "Supprimer la synchronisation"
+        }
+    },
+    "errors": {
+        "failedToFetchDialogs": "Échec de la récupération des conversations depuis Telegram",
+        "failedToCreateSync": "Échec de la création de la synchronisation",
+        "unknownError": "Une erreur inconnue s'est produite"
     }
 }

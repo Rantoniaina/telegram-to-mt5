@@ -75,6 +75,49 @@ const apiService = {
   },
 
   /**
+   * Make a PUT request to the API.
+   * @param endpoint - API endpoint path
+   * @param data - Request body data
+   * @returns Promise resolving to the response data
+   */
+  async put<T>(endpoint: string, data: any): Promise<T> {
+    console.log(`PUT ${API_BASE_URL}${endpoint}`, data);
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+      mode: 'cors',
+    });
+
+    return this.handleResponse<T>(response);
+  },
+
+  /**
+   * Make a DELETE request to the API.
+   * @param endpoint - API endpoint path
+   * @returns Promise resolving to the response data
+   */
+  async delete<T>(endpoint: string): Promise<T> {
+    console.log(`DELETE ${API_BASE_URL}${endpoint}`);
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      mode: 'cors',
+    });
+
+    return this.handleResponse<T>(response);
+  },
+
+  /**
    * Handle API response and parse JSON data.
    * @param response - Fetch Response object
    * @returns Promise resolving to the parsed response data

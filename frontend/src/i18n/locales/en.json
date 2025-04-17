@@ -93,5 +93,31 @@
     },
     "app": {
         "name": "T2M"
+    },
+    "sync": {
+        "create": {
+            "title": "Create New Sync",
+            "selectDialog": "Select a Telegram dialog to sync",
+            "syncName": "Sync Name",
+            "syncState": "Initial State",
+            "noDialogsFound": "No dialogs found. Make sure you're connected to Telegram.",
+            "syncNameReadOnly": "The sync name must match the dialog name and cannot be changed"
+        },
+        "state": {
+            "ACTIVE": "Active",
+            "PAUSED": "Paused",
+            "ERROR": "Error",
+            "STOPPED": "Stopped"
+        },
+        "actions": {
+            "start": "Start Sync",
+            "stop": "Stop Sync",
+            "delete": "Delete Sync"
+        }
+    },
+    "errors": {
+        "failedToFetchDialogs": "Failed to fetch dialogs from Telegram",
+        "failedToCreateSync": "Failed to create sync",
+        "unknownError": "An unknown error occurred"
     }
 }

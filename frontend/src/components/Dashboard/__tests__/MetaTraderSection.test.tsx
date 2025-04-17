@@ -2,11 +2,27 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MetaTraderSection } from '../MetaTraderSection';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../../i18n/test-i18n';
+import { SyncCreateDialog } from '../SyncCreateDialog';
+
+// Mock the SyncCreateDialog component
+jest.mock('../SyncCreateDialog', () => ({
+  SyncCreateDialog: jest.fn(({ open, onClose }) =>
+    open ? (
+      <div data-testid='mock-dialog'>
+        Mock Dialog <button onClick={onClose}>Close</button>
+      </div>
+    ) : null
+  ),
+}));
 
 describe('MetaTraderSection', () => {
   const renderWithI18n = (component: React.ReactNode) => {
     return render(<I18nextProvider i18n={i18n}>{component}</I18nextProvider>);
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('renders title and description', () => {
     renderWithI18n(<MetaTraderSection onCreateClick={() => {}} />);
@@ -36,5 +52,35 @@ describe('MetaTraderSection', () => {
   it('renders add icon', () => {
     renderWithI18n(<MetaTraderSection onCreateClick={() => {}} />);
     expect(screen.getByTestId('AddIcon')).toBeInTheDocument();
+  });
+
+  it('opens SyncCreateDialog when create card is clicked and no onCreateClick prop is provided', () => {
+    renderWithI18n(<MetaTraderSection />);
+
+    const createCard = screen.getByText(/create/i).closest('div');
+    if (createCard) {
+      fireEvent.click(createCard);
+    }
+
+    expect(screen.getByTestId('mock-dialog')).toBeInTheDocument();
+  });
+
+  it('closes SyncCreateDialog when dialog is closed', () => {
+    renderWithI18n(<MetaTraderSection />);
+
+    // Open dialog
+    const createCard = screen.getByText(/create/i).closest('div');
+    if (createCard) {
+      fireEvent.click(createCard);
+    }
+
+    // Dialog should be open
+    expect(screen.getByTestId('mock-dialog')).toBeInTheDocument();
+
+    // Close dialog
+    fireEvent.click(screen.getByText('Close'));
+
+    // Dialog should be closed
+    expect(screen.queryByTestId('mock-dialog')).not.toBeInTheDocument();
   });
 });

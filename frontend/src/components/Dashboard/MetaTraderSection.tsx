@@ -2,15 +2,35 @@ import { Box, Container, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import { CreateCard } from './styles';
+import { useState } from 'react';
+import { SyncCreateDialog } from './SyncCreateDialog';
 
 interface MetaTraderSectionProps {
-  onCreateClick: () => void;
+  onCreateClick?: () => void;
 }
 
 export const MetaTraderSection = ({
   onCreateClick,
 }: MetaTraderSectionProps) => {
   const { t } = useTranslation();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleCreateClick = () => {
+    if (onCreateClick) {
+      onCreateClick();
+    } else {
+      setDialogOpen(true);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleSyncCreated = () => {
+    // You could add logic here to refresh the list of syncs
+    console.log('Sync created successfully');
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -32,7 +52,7 @@ export const MetaTraderSection = ({
           }}
         >
           {/* Create Card */}
-          <CreateCard onClick={onCreateClick}>
+          <CreateCard onClick={handleCreateClick}>
             <AddIcon
               sx={{
                 fontSize: 40,
@@ -56,6 +76,13 @@ export const MetaTraderSection = ({
           </CreateCard>
         </Box>
       </Container>
+
+      {/* Sync Create Dialog */}
+      <SyncCreateDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onSuccess={handleSyncCreated}
+      />
     </Box>
   );
 };

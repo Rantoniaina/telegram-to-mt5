@@ -97,12 +97,6 @@ const Dashboard = () => {
     logout();
   };
 
-  const handleCreateClick = () => {
-    // This function will handle the create card click
-    console.log('Create card clicked');
-    // You can add your logic here, such as opening a modal or redirecting to another page
-  };
-
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -118,7 +112,7 @@ const Dashboard = () => {
           />
         );
       case 'metaTrader':
-        return <MetaTraderSection onCreateClick={handleCreateClick} />;
+        return <MetaTraderSection />;
       case 'settings':
         return <SettingsSection />;
       default:
