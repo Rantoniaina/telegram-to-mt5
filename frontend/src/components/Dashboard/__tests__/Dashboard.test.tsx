@@ -3,37 +3,19 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Dashboard from '../Dashboard';
 import { useAuth } from '../../../context/AuthContext';
 import '@testing-library/jest-dom/extend-expect';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../../i18n/test-i18n';
 
 // Manual mocks
-jest.mock('../../../context/AuthContext');
+jest.mock('../../../context/AuthContext', () => ({
+  useAuth: jest.fn(),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
 jest.mock('../../../services/telegramService', () => ({
   getDialogs: jest.fn(),
   disconnect: jest.fn(),
-}));
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, options?: any) => {
-      const translations: { [key: string]: string } = {
-        'app.name': 'Telegram to MT5',
-        'dashboard.welcome': 'Welcome to Dashboard',
-        'dashboard.telegram.loading': 'Loading dialogs...',
-        'dashboard.telegram.dialogsCount': `You have ${
-          options?.count || 0
-        } dialogs`,
-        'dashboard.telegram.connected': `Connected with API ID: ${
-          options?.apiId || ''
-        }`,
-        'common.dashboard': 'Dashboard',
-        'common.create': 'Create',
-        'common.logout': 'Logout',
-        'settings.title': 'Settings',
-        'settings.description': 'Manage your settings here',
-        'metatrader.title': 'MetaTrader',
-        'metatrader.description': 'Connect and manage your MetaTrader accounts',
-      };
-      return translations[key] || key;
-    },
-  }),
 }));
 
 // Import telegramService after mocking
@@ -51,6 +33,10 @@ describe('Dashboard Component', () => {
     { id: 1, name: 'Chat 1', type: 'private', entity_id: 101, unread_count: 0 },
     { id: 2, name: 'Group 1', type: 'group', entity_id: 201, unread_count: 3 },
   ];
+
+  const renderWithProviders = (component: React.ReactNode) => {
+    return render(<I18nextProvider i18n={i18n}>{component}</I18nextProvider>);
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -70,59 +56,63 @@ describe('Dashboard Component', () => {
   });
 
   test('renders dashboard with the correct title', () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText('Telegram to MT5')).toBeInTheDocument();
   });
 
   test('initially shows loading state for dialogs', () => {
-    render(<Dashboard />);
-    expect(screen.getByText('Loading dialogs...')).toBeInTheDocument();
+    renderWithProviders(<Dashboard />);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   test('loads and displays dialog count', async () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     await waitFor(() => {
-      expect(screen.getByText('You have 2 dialogs')).toBeInTheDocument();
+      expect(
+        screen.getByText('You have access to 2 Telegram dialogs')
+      ).toBeInTheDocument();
     });
 
     expect(telegramService.getDialogs).toHaveBeenCalledWith(mockCredentials);
   });
 
   test('shows connected API ID information', () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(
       screen.getByText('Connected with API ID: 12345')
     ).toBeInTheDocument();
   });
 
   test('switches to MetaTrader section when clicked', () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Initially on dashboard section
-    expect(screen.getByText('Welcome to Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to T2M Dashboard')).toBeInTheDocument();
 
     // Click on MetaTrader navigation item
-    fireEvent.click(screen.getByText('MetaTrader'));
+    fireEvent.click(screen.getByText('Metatrader 5 Sync'));
 
     // Should show MetaTrader content
     expect(
-      screen.getByText('Connect and manage your MetaTrader accounts')
+      screen.getByRole('heading', { name: 'Metatrader 5 Sync' })
     ).toBeInTheDocument();
   });
 
   test('switches to Settings section when clicked', () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Click on Settings navigation item
     fireEvent.click(screen.getByText('Settings'));
 
     // Should show Settings content
-    expect(screen.getByText('Manage your settings here')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Settings' })
+    ).toBeInTheDocument();
   });
 
   test('opens user menu when avatar is clicked', () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Menu should be closed initially
     expect(screen.queryByText('Logout')).not.toBeInTheDocument();
@@ -136,7 +126,7 @@ describe('Dashboard Component', () => {
   });
 
   test('calls logout function when logout option is clicked', async () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Open the menu
     const avatarButton = screen.getByRole('button', { name: /user avatar/i });
@@ -156,10 +146,10 @@ describe('Dashboard Component', () => {
     // Mock console.log
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Navigate to MetaTrader section
-    fireEvent.click(screen.getByText('MetaTrader'));
+    fireEvent.click(screen.getByText('Metatrader 5 Sync'));
 
     // Click on Create card
     fireEvent.click(screen.getAllByText('Create')[1]); // The second "Create" text is in the card
@@ -177,7 +167,7 @@ describe('Dashboard Component', () => {
     );
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -196,7 +186,7 @@ describe('Dashboard Component', () => {
     );
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Open the menu
     const avatarButton = screen.getByRole('button', { name: /user avatar/i });
@@ -216,5 +206,54 @@ describe('Dashboard Component', () => {
     expect(mockLogout).toHaveBeenCalled();
 
     consoleSpy.mockRestore();
+  });
+
+  test('renders sidebar with navigation items', () => {
+    renderWithProviders(<Dashboard />);
+    expect(
+      screen.getByRole('button', { name: /dashboard/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /metatrader/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /settings/i })
+    ).toBeInTheDocument();
+  });
+
+  test('renders user avatar', () => {
+    renderWithProviders(<Dashboard />);
+    expect(
+      screen.getByRole('img', { name: /user avatar/i })
+    ).toBeInTheDocument();
+  });
+
+  test('opens user menu when avatar is clicked', () => {
+    renderWithProviders(<Dashboard />);
+    const avatar = screen.getByRole('img', { name: /user avatar/i });
+    fireEvent.click(avatar);
+    expect(screen.getByText(/logout/i)).toBeInTheDocument();
+  });
+
+  test('changes active section when navigation items are clicked', () => {
+    renderWithProviders(<Dashboard />);
+
+    // Click MetaTrader section
+    fireEvent.click(screen.getByRole('button', { name: /metatrader/i }));
+    expect(
+      screen.getByRole('heading', { name: 'Metatrader 5 Sync' })
+    ).toBeInTheDocument();
+
+    // Click Settings section
+    fireEvent.click(screen.getByRole('button', { name: /settings/i }));
+    expect(
+      screen.getByRole('heading', { name: 'Settings' })
+    ).toBeInTheDocument();
+
+    // Click Dashboard section
+    fireEvent.click(screen.getByRole('button', { name: /dashboard/i }));
+    expect(
+      screen.getByRole('heading', { name: 'Welcome to T2M Dashboard' })
+    ).toBeInTheDocument();
   });
 });

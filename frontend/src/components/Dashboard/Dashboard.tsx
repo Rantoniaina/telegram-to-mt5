@@ -11,7 +11,6 @@ import {
   Menu,
   MenuItem,
   Divider,
-  Container,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -23,6 +22,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import telegramService from '../../services/telegramService';
+import { DashboardSection } from './DashboardSection';
+import { MetaTraderSection } from './MetaTraderSection';
+import { SettingsSection } from './SettingsSection';
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
   height: '100%',
@@ -41,28 +43,6 @@ const MainContentContainer = styled(Box)(({ theme }) => ({
   backgroundColor: 'transparent',
   overflow: 'auto',
   height: '100%',
-}));
-
-// Create Card styled component
-const CreateCard = styled(Paper)(({ theme }) => ({
-  width: '180px',
-  height: '180px',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '16px',
-  border: '2px dashed rgba(0, 0, 0, 0.15)',
-  backgroundColor: 'transparent',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  position: 'relative',
-  '&:hover': {
-    borderColor: theme.palette.primary.main,
-    backgroundColor: 'rgba(0, 0, 0, 0.02)',
-    transform: 'translateY(-5px)',
-    boxShadow: '0 8px 15px rgba(0, 0, 0, 0.05)',
-  },
 }));
 
 const Dashboard = () => {
@@ -127,86 +107,20 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'dashboard':
         return (
-          <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              {t('dashboard.welcome')}
-            </Typography>
-            {loadingDialogs ? (
-              <Typography sx={{ color: '#292929' }}>
-                {t('dashboard.telegram.loading')}
-              </Typography>
-            ) : (
-              <Typography sx={{ color: '#292929' }}>
-                {t('dashboard.telegram.dialogsCount', { count: dialogsCount })}
-              </Typography>
-            )}
-            {credentials && (
-              <Typography variant='body2' color='text.secondary' sx={{ mt: 2 }}>
-                {t('dashboard.telegram.connected', {
-                  apiId: credentials.api_id,
-                })}
-              </Typography>
-            )}
-          </Box>
+          <DashboardSection
+            loadingDialogs={loadingDialogs}
+            dialogsCount={dialogsCount}
+            credentials={
+              credentials
+                ? { api_id: credentials.api_id.toString() }
+                : undefined
+            }
+          />
         );
       case 'metaTrader':
-        return (
-          <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              {t('metatrader.title')}
-            </Typography>
-            <Typography sx={{ color: '#292929', mb: 4 }}>
-              {t('metatrader.description')}
-            </Typography>
-
-            {/* Cards section */}
-            <Container maxWidth='lg' sx={{ mt: 4, p: 0, ml: 0 }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 3,
-                  justifyContent: { xs: 'center', sm: 'flex-start' },
-                }}
-              >
-                {/* Create Card */}
-                <CreateCard onClick={handleCreateClick}>
-                  <AddIcon
-                    sx={{
-                      fontSize: 40,
-                      color: '#292929',
-                      mb: 1,
-                      opacity: 0.8,
-                    }}
-                  />
-                  <Typography
-                    variant='h6'
-                    sx={{
-                      color: '#292929',
-                      fontWeight: 500,
-                      textAlign: 'center',
-                      fontSize: '1rem',
-                      opacity: 0.8,
-                    }}
-                  >
-                    {t('common.create')}
-                  </Typography>
-                </CreateCard>
-              </Box>
-            </Container>
-          </Box>
-        );
+        return <MetaTraderSection onCreateClick={handleCreateClick} />;
       case 'settings':
-        return (
-          <Box sx={{ p: 2 }}>
-            <Typography variant='h4' gutterBottom sx={{ color: '#292929' }}>
-              {t('settings.title')}
-            </Typography>
-            <Typography sx={{ color: '#292929' }}>
-              {t('settings.description')}
-            </Typography>
-          </Box>
-        );
+        return <SettingsSection />;
       default:
         return null;
     }
