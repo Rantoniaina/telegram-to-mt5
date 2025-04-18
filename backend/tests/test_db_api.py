@@ -3,7 +3,7 @@ Tests for the database API endpoints.
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, UTC
 from fastapi import status
 
 from app.models.telegram_data import User
@@ -13,7 +13,7 @@ def test_user(db_session):
     """
     Create a test user in the database for testing.
     """
-    test_user = User(api_id="test_user_id", created_at=datetime.utcnow())
+    test_user = User(api_id="test_user_id", created_at=datetime.now(UTC))
     db_session.add(test_user)
     db_session.commit()
     db_session.refresh(test_user)

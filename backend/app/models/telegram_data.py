@@ -5,6 +5,7 @@ Database models for Telegram data.
 from datetime import datetime, UTC
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.types import TypeDecorator
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -40,6 +41,9 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     api_id = Column(String(255), unique=True, index=True, nullable=False)
     created_at = Column(TZDateTime, default=lambda: datetime.now(UTC))
+    
+    # Relationship to Sync
+    syncs = relationship("Sync", back_populates="user")
     
     def __repr__(self):
         return f"<User(id={self.id}, api_id='{self.api_id}')>" 

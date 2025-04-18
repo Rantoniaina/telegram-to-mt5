@@ -6,11 +6,13 @@
         "success": "Success",
         "cancel": "Cancel",
         "save": "Save",
+        "saving": "Saving...",
         "continue": "Continue",
         "create": "Create",
         "logout": "Log out",
         "settings": "Settings",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "close": "Close"
     },
     "signIn": {
         "title": "Sign in",
@@ -93,5 +95,77 @@
     },
     "app": {
         "name": "T2M"
+    },
+    "sync": {
+        "create": {
+            "title": "Create New Sync",
+            "selectDialog": "Select a Telegram dialog to sync",
+            "syncName": "Sync Name",
+            "syncState": "Initial State",
+            "noDialogsFound": "No dialogs found. Make sure you're connected to Telegram.",
+            "syncNameReadOnly": "The sync name must match the dialog name and cannot be changed"
+        },
+        "state": {
+            "ACTIVE": "Active",
+            "PAUSED": "Paused",
+            "ERROR": "Error",
+            "STOPPED": "Stopped"
+        },
+        "actions": {
+            "start": "Start Sync",
+            "stop": "Stop Sync",
+            "delete": "Delete Sync"
+        },
+        "tooltip": {
+            "pause": "Pause",
+            "resume": "Resume",
+            "stop": "Stop",
+            "play": "Play",
+            "delete": "Delete",
+            "settings": "Settings",
+            "viewDetails": "View Details"
+        },
+        "confirmation": {
+            "pause": {
+                "title": "Pause Sync",
+                "message": "Are you sure you want to pause the \"{{name}}\" sync?",
+                "button": "Pause"
+            },
+            "stop": {
+                "title": "Stop Sync",
+                "message": "Are you sure you want to stop the \"{{name}}\" sync?",
+                "button": "Stop"
+            },
+            "delete": {
+                "title": "Delete Sync",
+                "message": "Are you sure you want to delete the \"{{name}}\" sync? This action cannot be undone.",
+                "button": "Delete"
+            }
+        },
+        "status": {
+            "setActive": "Set to Active",
+            "setPaused": "Set to Paused",
+            "setStopped": "Set to Stopped",
+            "setError": "Set to Error"
+        },
+        "details": {
+            "summary": "Sync Summary",
+            "id": "ID",
+            "state": "State",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At"
+        },
+        "settings": {
+            "title": "Sync Settings",
+            "name": "Sync Name",
+            "state": "Sync State",
+            "saveSuccess": "Settings saved successfully",
+            "saveError": "Failed to save settings"
+        }
+    },
+    "errors": {
+        "failedToFetchDialogs": "Failed to fetch dialogs from Telegram",
+        "failedToCreateSync": "Failed to create sync",
+        "unknownError": "An unknown error occurred"
     }
 }

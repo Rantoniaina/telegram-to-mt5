@@ -6,11 +6,13 @@
         "success": "Succès",
         "cancel": "Annuler",
         "save": "Enregistrer",
+        "saving": "Enregistrement...",
         "continue": "Continuer",
         "create": "Créer",
         "logout": "Déconnexion",
         "settings": "Paramètres",
-        "dashboard": "Tableau de bord"
+        "dashboard": "Tableau de bord",
+        "close": "Fermer"
     },
     "signIn": {
         "title": "Connexion",
@@ -93,5 +95,77 @@
     },
     "app": {
         "name": "T2M"
+    },
+    "sync": {
+        "create": {
+            "title": "Créer une nouvelle synchronisation",
+            "selectDialog": "Sélectionnez une conversation Telegram à synchroniser",
+            "syncName": "Nom de la synchronisation",
+            "syncState": "État initial",
+            "noDialogsFound": "Aucune conversation trouvée. Assurez-vous d'être connecté à Telegram.",
+            "syncNameReadOnly": "Le nom de la synchronisation doit correspondre au nom de la conversation et ne peut pas être modifié"
+        },
+        "state": {
+            "ACTIVE": "Actif",
+            "PAUSED": "En pause",
+            "ERROR": "Erreur",
+            "STOPPED": "Arrêté"
+        },
+        "actions": {
+            "start": "Démarrer la synchronisation",
+            "stop": "Arrêter la synchronisation",
+            "delete": "Supprimer la synchronisation"
+        },
+        "tooltip": {
+            "pause": "Mettre en pause",
+            "resume": "Reprendre",
+            "stop": "Arrêter",
+            "play": "Démarrer",
+            "delete": "Supprimer",
+            "settings": "Paramètres",
+            "viewDetails": "Voir les détails"
+        },
+        "confirmation": {
+            "pause": {
+                "title": "Mettre en pause la synchronisation",
+                "message": "Êtes-vous sûr de vouloir mettre en pause la synchronisation \"{{name}}\" ?",
+                "button": "Mettre en pause"
+            },
+            "stop": {
+                "title": "Arrêter la synchronisation",
+                "message": "Êtes-vous sûr de vouloir arrêter la synchronisation \"{{name}}\" ?",
+                "button": "Arrêter"
+            },
+            "delete": {
+                "title": "Supprimer la synchronisation",
+                "message": "Êtes-vous sûr de vouloir supprimer la synchronisation \"{{name}}\" ? Cette action ne peut pas être annulée.",
+                "button": "Supprimer"
+            }
+        },
+        "status": {
+            "setActive": "Définir comme actif",
+            "setPaused": "Définir comme en pause",
+            "setStopped": "Définir comme arrêté",
+            "setError": "Définir comme en erreur"
+        },
+        "details": {
+            "summary": "Résumé de la synchronisation",
+            "id": "ID",
+            "state": "État",
+            "createdAt": "Créé le",
+            "updatedAt": "Mis à jour le"
+        },
+        "settings": {
+            "title": "Paramètres de synchronisation",
+            "name": "Nom de la synchronisation",
+            "state": "État de la synchronisation",
+            "saveSuccess": "Paramètres enregistrés avec succès",
+            "saveError": "Échec de l'enregistrement des paramètres"
+        }
+    },
+    "errors": {
+        "failedToFetchDialogs": "Échec de la récupération des conversations depuis Telegram",
+        "failedToCreateSync": "Échec de la création de la synchronisation",
+        "unknownError": "Une erreur inconnue s'est produite"
     }
 }

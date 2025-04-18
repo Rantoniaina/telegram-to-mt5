@@ -1,5 +1,7 @@
 // API configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
+const API_BASE_URL = typeof import.meta !== 'undefined' 
+  ? import.meta.env.VITE_API_URL || 'http://localhost:8000/v1'
+  : process.env.VITE_API_URL || 'http://localhost:8000/v1';
 
 /**
  * Generic API error class.
@@ -67,6 +69,49 @@ const apiService = {
         'Accept': 'application/json',
       },
       body: JSON.stringify(data),
+      credentials: 'include',
+      mode: 'cors',
+    });
+
+    return this.handleResponse<T>(response);
+  },
+
+  /**
+   * Make a PUT request to the API.
+   * @param endpoint - API endpoint path
+   * @param data - Request body data
+   * @returns Promise resolving to the response data
+   */
+  async put<T>(endpoint: string, data: any): Promise<T> {
+    console.log(`PUT ${API_BASE_URL}${endpoint}`, data);
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+      mode: 'cors',
+    });
+
+    return this.handleResponse<T>(response);
+  },
+
+  /**
+   * Make a DELETE request to the API.
+   * @param endpoint - API endpoint path
+   * @returns Promise resolving to the response data
+   */
+  async delete<T>(endpoint: string): Promise<T> {
+    console.log(`DELETE ${API_BASE_URL}${endpoint}`);
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       credentials: 'include',
       mode: 'cors',
     });

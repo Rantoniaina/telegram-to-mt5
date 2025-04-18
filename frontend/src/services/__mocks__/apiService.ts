@@ -1,5 +1,5 @@
 /**
- * Mock implementation of the API service for testing.
+ * Mock API Service for testing
  */
 
 export class ApiError extends Error {
@@ -17,7 +17,9 @@ export class ApiError extends Error {
 const apiService = {
   get: jest.fn(),
   post: jest.fn(),
-  handleResponse: jest.fn()
+  put: jest.fn(),
+  delete: jest.fn(),
+  handleResponse: jest.fn(),
 };
 
 export default apiService; 

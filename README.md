@@ -201,3 +201,148 @@ backend/
 ## 📧 Contact & Support
 
 For issues or feature requests, please use the issue tracker on the repository.
+
+# Telegram Message Listener
+
+This project provides a service to connect to Telegram and retrieve or listen for messages in real-time.
+
+## Features
+
+- Connect to Telegram using official API
+- Retrieve message history from chats, groups, and channels
+- Search for specific messages
+- Listen for new messages in real-time
+- Handle authentication including 2FA
+
+## Setup
+
+1. **Get Telegram API Credentials**
+
+   - Visit https://my.telegram.org/auth
+   - Log in with your phone number
+   - Go to "API development tools"
+   - Create a new application
+   - Note down your `api_id` and `api_hash`
+
+2. **Install Dependencies**
+
+   ```bash
+   pip install telethon python-dotenv
+   ```
+
+3. **Configure Environment**
+   Create a `.env` file in the project root with:
+   ```
+   TELEGRAM_API_ID=your_api_id
+   TELEGRAM_API_HASH=your_api_hash
+   TELEGRAM_PHONE=your_phone_number  # with country code
+   ```
+
+## Usage
+
+### Listening for New Messages
+
+Run the example script:
+
+```bash
+python examples/listen_for_messages.py
+```
+
+When connecting for the first time, you'll need to enter the verification code sent to your Telegram app. If you have two-factor authentication enabled, you'll also need to enter your password.
+
+### Using in Your Own Code
+
+```python
+import asyncio
+from backend.app.services.telegram_service import TelegramService
+
+async def message_handler(message_info):
+    print(f"New message: {message_info['text']}")
+
+async def main():
+    # Create the TelegramService instance
+    service = TelegramService(
+        api_id=YOUR_API_ID,
+        api_hash="YOUR_API_HASH",
+        phone="YOUR_PHONE_NUMBER"
+    )
+
+    await service.connect()
+
+    # To get a list of all dialogs
+    dialogs = await service.get_all_dialogs()
+    print(dialogs)
+
+    # To listen for new messages in specific dialogs
+    await service.listen_for_new_messages(
+        dialog_ids=[123456789],  # optional, None for all dialogs
+        callback=message_handler
+    )
+
+    # Don't forget to disconnect when done
+    await service.disconnect()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## License
+
+MIT
+
+## 🆕 Telegram Message Sync Service
+
+This project includes a service to continuously listen for and store messages from multiple Telegram chats simultaneously.
+
+### Key Features of the Sync Service
+
+- 🔄 Run multiple Telegram listeners simultaneously
+- 💾 Configure different output types (database, file, etc.)
+- 🌐 REST API to manage sync configurations
+- 🕒 Automatic reconnection and monitoring
+- 📊 Track message history in the database
+
+### Using the Sync Service
+
+The sync service is accessible through API endpoints:
+
+```bash
+# List all sync configurations
+GET /v1/sync/
+
+# Create a new sync configuration
+POST /v1/sync/
+```
+
+### Creating a Sync Configuration
+
+You can create a new sync configuration using the API:
+
+```bash
+curl -X POST "http://localhost:8000/v1/sync/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": 1,
+    "discussion_name": "My Important Channel",
+    "state": "active"
+  }'
+```
+
+Or use the Swagger UI at http://localhost:8000/docs
+
+### Managing Sync Configurations
+
+The following API endpoints are available:
+
+- `GET /v1/sync/` - List all sync configurations
+- `POST /v1/sync/` - Create a new sync configuration
+- `GET /v1/sync/{sync_id}` - Get a specific configuration
+- `PUT /v1/sync/{sync_id}` - Update a configuration
+- `DELETE /v1/sync/{sync_id}` - Delete a configuration
+- `PUT /v1/sync/{sync_id}/state/{state}` - Update a sync's state
+
+### Accessing Synced Messages
+
+Synced messages are stored in the database and can be accessed via SQL queries or your preferred ORM.
+
+If you configured file output, messages will also be saved to the specified file path.
