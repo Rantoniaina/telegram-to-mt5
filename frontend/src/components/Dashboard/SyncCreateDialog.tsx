@@ -116,7 +116,20 @@ export const SyncCreateDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth='sm'
+      fullWidth
+      PaperProps={{
+        style: {
+          backgroundColor: '#4b5563',
+          color: 'white',
+          boxShadow: '0px 3px 15px rgba(0, 0, 0, 0.4)',
+          opacity: 1,
+        },
+      }}
+    >
       <DialogTitle>{t('sync.create.title')}</DialogTitle>
       <DialogContent>
         {error && (

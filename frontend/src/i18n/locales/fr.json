@@ -113,6 +113,36 @@
             "start": "Démarrer la synchronisation",
             "stop": "Arrêter la synchronisation",
             "delete": "Supprimer la synchronisation"
+        },
+        "tooltip": {
+            "pause": "Mettre en pause",
+            "resume": "Reprendre",
+            "stop": "Arrêter",
+            "play": "Démarrer",
+            "delete": "Supprimer"
+        },
+        "confirmation": {
+            "pause": {
+                "title": "Mettre en pause la synchronisation",
+                "message": "Êtes-vous sûr de vouloir mettre en pause la synchronisation \"{{name}}\" ?",
+                "button": "Mettre en pause"
+            },
+            "stop": {
+                "title": "Arrêter la synchronisation",
+                "message": "Êtes-vous sûr de vouloir arrêter la synchronisation \"{{name}}\" ?",
+                "button": "Arrêter"
+            },
+            "delete": {
+                "title": "Supprimer la synchronisation",
+                "message": "Êtes-vous sûr de vouloir supprimer la synchronisation \"{{name}}\" ? Cette action ne peut pas être annulée.",
+                "button": "Supprimer"
+            }
+        },
+        "status": {
+            "setActive": "Définir comme actif",
+            "setPaused": "Définir comme en pause",
+            "setStopped": "Définir comme arrêté",
+            "setError": "Définir comme en erreur"
         }
     },
     "errors": {

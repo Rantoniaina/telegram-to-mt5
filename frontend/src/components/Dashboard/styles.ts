@@ -2,8 +2,8 @@ import { Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const CreateCard = styled(Paper)(({ theme }) => ({
-  width: '180px',
-  height: '180px',
+  width: 180,
+  height: 180,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',

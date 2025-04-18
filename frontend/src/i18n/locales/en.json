@@ -113,6 +113,36 @@
             "start": "Start Sync",
             "stop": "Stop Sync",
             "delete": "Delete Sync"
+        },
+        "tooltip": {
+            "pause": "Pause",
+            "resume": "Resume",
+            "stop": "Stop",
+            "play": "Play",
+            "delete": "Delete"
+        },
+        "confirmation": {
+            "pause": {
+                "title": "Pause Sync",
+                "message": "Are you sure you want to pause the \"{{name}}\" sync?",
+                "button": "Pause"
+            },
+            "stop": {
+                "title": "Stop Sync",
+                "message": "Are you sure you want to stop the \"{{name}}\" sync?",
+                "button": "Stop"
+            },
+            "delete": {
+                "title": "Delete Sync",
+                "message": "Are you sure you want to delete the \"{{name}}\" sync? This action cannot be undone.",
+                "button": "Delete"
+            }
+        },
+        "status": {
+            "setActive": "Set to Active",
+            "setPaused": "Set to Paused",
+            "setStopped": "Set to Stopped",
+            "setError": "Set to Error"
         }
     },
     "errors": {

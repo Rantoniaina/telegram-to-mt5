@@ -39,10 +39,10 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
 
 const MainContentContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
   backgroundColor: 'transparent',
-  overflow: 'auto',
   height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
 }));
 
 const Dashboard = () => {
@@ -284,7 +284,7 @@ const Dashboard = () => {
 
       {/* Main content */}
       <MainContentContainer>
-        {/* Header with Create button and avatar */}
+        {/* Header with Create button and avatar - fixed position */}
         <Box
           sx={{
             display: 'flex',
@@ -292,6 +292,7 @@ const Dashboard = () => {
             alignItems: 'center',
             mb: 3,
             gap: 2,
+            flexShrink: 0,
           }}
         >
           <Button
@@ -359,7 +360,16 @@ const Dashboard = () => {
           </Menu>
         </Box>
 
-        {renderContent()}
+        {/* Scrollable content area */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflow: 'auto',
+            px: 3,
+          }}
+        >
+          {renderContent()}
+        </Box>
       </MainContentContainer>
     </Box>
   );
