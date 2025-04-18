@@ -24,6 +24,7 @@ backend/
 │   │   └── telegram.py  # Telegram schemas
 │   ├── services/        # Business logic services
 │   │   ├── telegram_service.py  # Telegram service
+│   │   ├── listener_service.py  # Telegram message listener
 │   │   └── db_service.py        # Database service
 │   └── main.py          # Application entry point
 ├── db/                  # Database files
@@ -39,9 +40,11 @@ backend/
 - 💬 Retrieve all dialogs (chats, channels, groups)
 - 📨 Get messages from specific dialogs
 - 🔍 Search for messages across dialogs
+- 🔔 Real-time message listener for channels/chats
 - 📱 Verification code and 2FA password support
 - 💾 Session management for multiple clients
 - 🗄️ Store data in SQLite database
+- 🌐 WebSocket API for real-time message updates
 
 ## 📋 Requirements
 
@@ -90,6 +93,99 @@ python -m app.main
 ```
 
 The server will start on http://localhost:8000 by default. You can access the interactive API documentation at http://localhost:8000/docs.
+
+## 🎧 Using the Message Listener
+
+The project includes a dedicated listener service that continuously monitors for new messages in specified Telegram channels or chats:
+
+```bash
+# Listen for new messages in a specific dialog
+python backend/listen.py -d 123456789
+```
+
+You can also use the `TelegramListenerService` programmatically:
+
+```python
+import asyncio
+from app.services import TelegramService, TelegramListenerService
+
+async def message_handler(message):
+    print(f"New message: {message.text}")
+
+async def main():
+    # Initialize the Telegram service
+    telegram_service = TelegramService(
+        api_id=12345,
+        api_hash="your_api_hash",
+        phone="+1234567890"
+    )
+
+    # Connect to Telegram
+    await telegram_service.connect()
+
+    # Create the listener service
+    listener = TelegramListenerService(telegram_service)
+
+    # Start listening to a dialog
+    await listener.start_listening(123456789, message_handler)
+
+    # Keep running until Ctrl+C
+    try:
+        while True:
+            await asyncio.sleep(1)
+    finally:
+        # Clean up
+        await listener.stop_all_listeners()
+        await telegram_service.disconnect()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+## 🌐 Real-Time Message Updates with WebSocket API
+
+The API provides a WebSocket endpoint for real-time message updates from Telegram channels or chats. This allows your frontend to display new messages as they arrive without polling.
+
+### WebSocket Connection
+
+Connect to the WebSocket endpoint:
+```
+
+ws://localhost:8000/v1/ws/messages
+
+````
+
+After connecting, subscribe to specific dialogs by sending a JSON message:
+```json
+{
+  "action": "subscribe",
+  "dialog_id": 123456789
+}
+````
+
+You will receive new messages in real-time:
+
+```json
+{
+  "event": "new_message",
+  "dialog_id": 123456789,
+  "message": {
+    "id": 123,
+    "text": "Message content",
+    "date": "2023-07-01T12:34:56+00:00",
+    "sender": {
+      "id": 987654321,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe"
+    },
+    "has_media": false
+  }
+}
+```
+
+### Example HTML/JS Client
+
+An example HTML client is provided in `backend/examples/websocket_client.html`. Open this file in a browser to test the WebSocket API.
 
 ## 🔌 API Usage
 

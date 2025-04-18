@@ -6,11 +6,13 @@
         "success": "Succès",
         "cancel": "Annuler",
         "save": "Enregistrer",
+        "saving": "Enregistrement...",
         "continue": "Continuer",
         "create": "Créer",
         "logout": "Déconnexion",
         "settings": "Paramètres",
-        "dashboard": "Tableau de bord"
+        "dashboard": "Tableau de bord",
+        "close": "Fermer"
     },
     "signIn": {
         "title": "Connexion",
@@ -119,7 +121,9 @@
             "resume": "Reprendre",
             "stop": "Arrêter",
             "play": "Démarrer",
-            "delete": "Supprimer"
+            "delete": "Supprimer",
+            "settings": "Paramètres",
+            "viewDetails": "Voir les détails"
         },
         "confirmation": {
             "pause": {
@@ -143,6 +147,20 @@
             "setPaused": "Définir comme en pause",
             "setStopped": "Définir comme arrêté",
             "setError": "Définir comme en erreur"
+        },
+        "details": {
+            "summary": "Résumé de la synchronisation",
+            "id": "ID",
+            "state": "État",
+            "createdAt": "Créé le",
+            "updatedAt": "Mis à jour le"
+        },
+        "settings": {
+            "title": "Paramètres de synchronisation",
+            "name": "Nom de la synchronisation",
+            "state": "État de la synchronisation",
+            "saveSuccess": "Paramètres enregistrés avec succès",
+            "saveError": "Échec de l'enregistrement des paramètres"
         }
     },
     "errors": {

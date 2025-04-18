@@ -6,11 +6,13 @@
         "success": "Success",
         "cancel": "Cancel",
         "save": "Save",
+        "saving": "Saving...",
         "continue": "Continue",
         "create": "Create",
         "logout": "Log out",
         "settings": "Settings",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "close": "Close"
     },
     "signIn": {
         "title": "Sign in",
@@ -119,7 +121,9 @@
             "resume": "Resume",
             "stop": "Stop",
             "play": "Play",
-            "delete": "Delete"
+            "delete": "Delete",
+            "settings": "Settings",
+            "viewDetails": "View Details"
         },
         "confirmation": {
             "pause": {
@@ -143,6 +147,20 @@
             "setPaused": "Set to Paused",
             "setStopped": "Set to Stopped",
             "setError": "Set to Error"
+        },
+        "details": {
+            "summary": "Sync Summary",
+            "id": "ID",
+            "state": "State",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At"
+        },
+        "settings": {
+            "title": "Sync Settings",
+            "name": "Sync Name",
+            "state": "Sync State",
+            "saveSuccess": "Settings saved successfully",
+            "saveError": "Failed to save settings"
         }
     },
     "errors": {

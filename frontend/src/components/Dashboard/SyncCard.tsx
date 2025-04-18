@@ -21,6 +21,7 @@ interface SyncCardProps {
   sync: Sync;
   onSyncUpdated?: (updatedSync: Sync) => void;
   onSyncDeleted?: (syncId: number) => void;
+  onClick?: (sync: Sync) => void;
 }
 
 // Define breathing animation
@@ -58,7 +59,7 @@ export const getStatusColor = (state: string) => {
 };
 
 // Get animation parameters based on state
-const getAnimationProps = (state: string) => {
+export const getAnimationProps = (state: string) => {
   switch (state) {
     case 'ACTIVE':
       return {
@@ -89,6 +90,7 @@ export const SyncCard: React.FC<SyncCardProps> = ({
   sync: initialSync,
   onSyncUpdated,
   onSyncDeleted,
+  onClick,
 }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -179,6 +181,18 @@ export const SyncCard: React.FC<SyncCardProps> = ({
     }
   };
 
+  const handleCardClick = (event: React.MouseEvent) => {
+    // Only trigger the card click if onClick is provided
+    if (onClick && !isLoading) {
+      onClick(sync);
+    }
+  };
+
+  const handleControlClick = (event: React.MouseEvent) => {
+    // Stop propagation to prevent the card click from being triggered
+    event.stopPropagation();
+  };
+
   const dialogProps = getConfirmDialogProps();
   const animationProps = getAnimationProps(sync.state);
 
@@ -201,7 +215,12 @@ export const SyncCard: React.FC<SyncCardProps> = ({
             transform: 'translateY(-5px)',
             boxShadow: '0 8px 15px rgba(0, 0, 0, 0.1)',
           },
+          cursor: onClick ? 'pointer' : 'default',
         }}
+        onClick={handleCardClick}
+        role='button'
+        aria-label={t('sync.tooltip.viewDetails')}
+        tabIndex={0}
       >
         {/* Header row with status dot and action buttons */}
         <Box
@@ -231,6 +250,7 @@ export const SyncCard: React.FC<SyncCardProps> = ({
               display: 'flex',
               gap: '4px',
             }}
+            onClick={handleControlClick}
           >
             {sync.state === 'ACTIVE' && (
               <>

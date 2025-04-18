@@ -13,6 +13,7 @@ import { SyncCreateDialog } from './SyncCreateDialog';
 import { useAuth } from '../../context/AuthContext';
 import apiService from '../../services/apiService';
 import { SyncCard, Sync } from './SyncCard';
+import { SyncDetails } from './SyncDetails';
 
 interface MetaTraderSectionProps {
   onCreateClick?: () => void;
@@ -28,6 +29,7 @@ export const MetaTraderSection = ({
   const [loading, setLoading] = useState(true);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedSync, setSelectedSync] = useState<Sync | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Use the api_id from credentials as the user ID
   const userId = credentials?.api_id;
@@ -75,10 +77,21 @@ export const MetaTraderSection = ({
     setSyncs((prevSyncs) =>
       prevSyncs.map((sync) => (sync.id === updatedSync.id ? updatedSync : sync))
     );
+
+    // Also update the selected sync if it's currently being viewed
+    if (selectedSync && selectedSync.id === updatedSync.id) {
+      setSelectedSync(updatedSync);
+    }
   };
 
   const handleSyncDeleted = (syncId: number) => {
     setSyncs((prevSyncs) => prevSyncs.filter((sync) => sync.id !== syncId));
+
+    // Close the details dialog if the deleted sync was being viewed
+    if (selectedSync && selectedSync.id === syncId) {
+      setDetailsOpen(false);
+      setSelectedSync(null);
+    }
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, sync: Sync) => {
@@ -104,6 +117,17 @@ export const MetaTraderSection = ({
     }
 
     handleMenuClose();
+  };
+
+  const handleSyncClick = (sync: Sync) => {
+    setSelectedSync(sync);
+    setDetailsOpen(true);
+  };
+
+  const handleDetailsClose = () => {
+    setDetailsOpen(false);
+    // Keep the selected sync for a brief moment to avoid UI flicker
+    setTimeout(() => setSelectedSync(null), 300);
   };
 
   return (
@@ -162,6 +186,7 @@ export const MetaTraderSection = ({
                 sync={sync}
                 onSyncUpdated={handleSyncUpdated}
                 onSyncDeleted={handleSyncDeleted}
+                onClick={handleSyncClick}
               />
             ))}
           </Box>
@@ -193,6 +218,15 @@ export const MetaTraderSection = ({
         open={dialogOpen}
         onClose={handleDialogClose}
         onSuccess={handleSyncCreated}
+      />
+
+      {/* Sync Details Dialog */}
+      <SyncDetails
+        sync={selectedSync}
+        open={detailsOpen}
+        onClose={handleDetailsClose}
+        onSyncUpdated={handleSyncUpdated}
+        onSyncDeleted={handleSyncDeleted}
       />
     </Box>
   );
