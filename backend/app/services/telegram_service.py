@@ -63,6 +63,51 @@ class TelegramService:
             # For the API to handle, we'll raise an exception to indicate verification is needed
             raise ValueError("Verification code required. Please check your phone.")
     
+    async def connect_with_credentials(self, api_id: int, api_hash: str, phone: Optional[str] = None) -> bool:
+        """
+        Connect to Telegram using provided credentials.
+        
+        Args:
+            api_id: Telegram API ID
+            api_hash: Telegram API hash
+            phone: Phone number (optional if session exists)
+            
+        Returns:
+            True if connected and authorized, False if verification needed
+        """
+        # Update instance credentials if they differ
+        if self.api_id != api_id or self.api_hash != api_hash or self.phone != phone:
+            self.api_id = api_id
+            self.api_hash = api_hash
+            if phone:
+                self.phone = phone
+            
+            # Create a new client if necessary
+            session_name = f"telegram_session_{api_id}"
+            self.client = TelegramClient(session_name, api_id, api_hash)
+        
+        # Ensure client is connected
+        if not self.client.is_connected():
+            await self.client.connect()
+        
+        # Check if already authorized
+        if await self.client.is_user_authorized():
+            return True
+        
+        # If not authorized and no phone provided, we can't proceed
+        if not self.phone:
+            return False
+        
+        try:
+            # Send code and store the phone_code_hash
+            result = await self.client.send_code_request(self.phone)
+            self.phone_code_hash = result.phone_code_hash
+            return False  # Need verification
+        except Exception as e:
+            # If there's an error, disconnect and raise
+            await self.disconnect()
+            raise ValueError(f"Failed to connect: {str(e)}")
+    
     async def sign_in_with_code(self, code: str) -> None:
         """
         Sign in with a verification code.
@@ -127,6 +172,22 @@ class TelegramService:
             result.append(dialog_info)
         
         return result
+    
+    async def get_dialog_by_name(self, dialog_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Find a dialog by its name.
+        
+        Args:
+            dialog_name: Name of the dialog to find
+            
+        Returns:
+            Dialog information dictionary if found, None otherwise
+        """
+        dialogs = await self.get_all_dialogs()
+        for dialog in dialogs:
+            if dialog["name"].lower() == dialog_name.lower():
+                return dialog
+        return None
     
     async def get_messages_from_dialog(
         self, 

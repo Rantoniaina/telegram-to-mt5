@@ -1,17 +1,6 @@
 /**
- * Mock implementation of the API service for testing.
+ * Mock API Service for testing
  */
-
-// Mock API service for testing
-const apiService = {
-  get: jest.fn().mockImplementation(() => Promise.resolve({})),
-  post: jest.fn().mockImplementation(() => Promise.resolve({})),
-  put: jest.fn().mockImplementation(() => Promise.resolve({})),
-  delete: jest.fn().mockImplementation(() => Promise.resolve({})),
-  handleResponse: jest.fn().mockImplementation((response) => Promise.resolve(response))
-};
-
-export default apiService;
 
 export class ApiError extends Error {
   status: number;
@@ -23,4 +12,14 @@ export class ApiError extends Error {
     this.status = status;
     this.data = data;
   }
-} 
+}
+
+const apiService = {
+  get: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn(),
+  handleResponse: jest.fn(),
+};
+
+export default apiService; 

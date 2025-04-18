@@ -24,6 +24,8 @@ module.exports = {
         '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
         // Mock Vite's import.meta.env
         '^@/(.*)$': '<rootDir>/src/$1',
+        // Use the Vite env mock
+        'import.meta': '<rootDir>/__mocks__/viteEnvMock.js'
     },
 
     // Automatically mock services directory
@@ -42,6 +44,9 @@ module.exports = {
 
     // Provide global variables to Jest
     globals: {
+        'ts-jest': {
+            useESM: true,
+        },
         'import.meta': {
             env: {
                 VITE_API_URL: 'http://localhost:8000/v1',

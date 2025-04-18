@@ -36,6 +36,20 @@ class TelegramListenerService:
         self._message_handlers: Dict[int, List[Callable[[Message], Any]]] = {}  # dialog_id -> list of handlers
         self._stop_events: Dict[int, asyncio.Event] = {}  # dialog_id -> stop event
         
+    async def connect_with_credentials(self, api_id: int, api_hash: str, phone: Optional[str] = None) -> bool:
+        """
+        Connect to Telegram using provided credentials.
+        
+        Args:
+            api_id: Telegram API ID
+            api_hash: Telegram API hash
+            phone: Phone number (optional if session exists)
+            
+        Returns:
+            True if connected and authorized, False if verification needed
+        """
+        return await self.telegram_service.connect_with_credentials(api_id, api_hash, phone)
+        
     async def start_listening(self, dialog_id: int, handler: Callable[[Message], Any]) -> bool:
         """
         Start listening to new messages in a specific dialog.

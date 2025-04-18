@@ -292,7 +292,7 @@ MIT
 
 ## 🆕 Telegram Message Sync Service
 
-This project now includes a service to continuously listen for and store messages from multiple Telegram chats simultaneously.
+This project includes a service to continuously listen for and store messages from multiple Telegram chats simultaneously.
 
 ### Key Features of the Sync Service
 
@@ -302,18 +302,17 @@ This project now includes a service to continuously listen for and store message
 - 🕒 Automatic reconnection and monitoring
 - 📊 Track message history in the database
 
-### How to Run the Sync Service
+### Using the Sync Service
 
-The easiest way to start both the API server and sync runner:
+The sync service is accessible through API endpoints:
 
 ```bash
-./run_telegram_sync.sh
+# List all sync configurations
+GET /v1/sync/
+
+# Create a new sync configuration
+POST /v1/sync/
 ```
-
-This will start:
-
-1. The API server on port 8000
-2. The sync runner process that maintains all active sync configs
 
 ### Creating a Sync Configuration
 
@@ -323,15 +322,9 @@ You can create a new sync configuration using the API:
 curl -X POST "http://localhost:8000/v1/sync/" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "My Sync Config",
-    "description": "Listen to my important channels",
-    "session_name": "my_session",
-    "dialog_ids": [123456789, 987654321],
-    "is_active": true,
-    "output_type": "file",
-    "output_config": {
-      "file_path": "messages/important_channels.json"
-    }
+    "user_id": 1,
+    "discussion_name": "My Important Channel",
+    "state": "active"
   }'
 ```
 
@@ -343,11 +336,10 @@ The following API endpoints are available:
 
 - `GET /v1/sync/` - List all sync configurations
 - `POST /v1/sync/` - Create a new sync configuration
-- `GET /v1/sync/{config_id}` - Get a specific configuration
-- `PUT /v1/sync/{config_id}` - Update a configuration
-- `DELETE /v1/sync/{config_id}` - Delete a configuration
-- `POST /v1/sync/{config_id}/start` - Start a sync
-- `POST /v1/sync/{config_id}/stop` - Stop a sync
+- `GET /v1/sync/{sync_id}` - Get a specific configuration
+- `PUT /v1/sync/{sync_id}` - Update a configuration
+- `DELETE /v1/sync/{sync_id}` - Delete a configuration
+- `PUT /v1/sync/{sync_id}/state/{state}` - Update a sync's state
 
 ### Accessing Synced Messages
 

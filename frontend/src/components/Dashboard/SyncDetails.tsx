@@ -126,20 +126,40 @@ export const SyncDetails: React.FC<SyncDetailsProps> = ({
     // Use the backend API URL from environment variables
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
 
-    // Parse URL to handle different formats
-    let baseUrl = apiUrl;
-
     // Remove protocol if present
-    baseUrl = baseUrl.replace(/^https?:\/\//, '');
+    let baseUrl = apiUrl.replace(/^https?:\/\//, '');
 
     // Remove trailing /v1 if present
     baseUrl = baseUrl.replace(/\/v1$/, '');
 
     const wsProtocol =
       window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const wsUrl = `${wsProtocol}${baseUrl}/v1/ws/messages${
-      clientId ? `?client_id=${clientId}` : ''
-    }`;
+
+    // Build the WebSocket URL with authentication parameters
+    let wsUrl = `${wsProtocol}${baseUrl}/v1/ws/messages`;
+
+    // Create URL parameters with all the necessary data
+    const params = new URLSearchParams();
+
+    // Always include client_id if available
+    if (clientId) {
+      params.append('client_id', clientId);
+    }
+
+    // Add authentication parameters
+    if (credentials) {
+      params.append('api_id', credentials.api_id.toString());
+      params.append('api_hash', credentials.api_hash);
+      if (credentials.phone) {
+        params.append('phone', credentials.phone);
+      }
+    }
+
+    // Append parameters to URL
+    const paramString = params.toString();
+    if (paramString) {
+      wsUrl += `?${paramString}`;
+    }
 
     // Close any existing connection
     if (websocketRef.current) {
@@ -157,7 +177,7 @@ export const SyncDetails: React.FC<SyncDetailsProps> = ({
       // Add system connection message
       const connectedMsg: TelegramMessage = {
         id: Date.now(),
-        text: 'Connected to Telegram channel...',
+        text: 'Connected to WebSocket service...',
         date: new Date().toISOString(),
         sender: {
           id: null,
@@ -172,29 +192,82 @@ export const SyncDetails: React.FC<SyncDetailsProps> = ({
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log('WebSocket message:', data);
 
       if (data.event === 'connected') {
         setClientId(data.client_id);
         console.log('Client ID:', data.client_id);
+      } else if (data.event === 'authenticated') {
+        // Successfully authenticated
+        const authMsg: TelegramMessage = {
+          id: Date.now(),
+          text: 'Authenticated with Telegram',
+          date: new Date().toISOString(),
+          sender: {
+            id: null,
+            first_name: 'System',
+            last_name: null,
+            username: null,
+          },
+          has_media: false,
+        };
+        setMessages((prev) => [...prev, authMsg]);
 
-        // Subscribe to the sync's channel
-        if (currentSync && currentSync.entity_id) {
+        // Now we can subscribe to the channel
+        if (currentSync) {
+          // Use subscribe_by_name action with discussion_name
           ws.send(
             JSON.stringify({
-              action: 'subscribe',
-              dialog_id: currentSync.entity_id,
-            })
-          );
-        } else if (currentSync) {
-          // Fallback to using sync.id if entity_id is not available
-          console.warn('No entity_id found, using sync.id as fallback');
-          ws.send(
-            JSON.stringify({
-              action: 'subscribe',
-              dialog_id: currentSync.id,
+              action: 'subscribe_by_name',
+              dialog_name: currentSync.discussion_name,
             })
           );
         }
+      } else if (data.event === 'verification_needed') {
+        // Need to verify with a code
+        const verificationMsg: TelegramMessage = {
+          id: Date.now(),
+          text: `Verification required: ${data.message}`,
+          date: new Date().toISOString(),
+          sender: {
+            id: null,
+            first_name: 'System',
+            last_name: null,
+            username: null,
+          },
+          has_media: false,
+        };
+        setMessages((prev) => [...prev, verificationMsg]);
+
+        // In a real app, you would prompt the user for the verification code here
+        // For this example, we'll simulate it with a timeout and a hardcoded code
+        const promptCode = prompt(
+          'Please enter the verification code sent to your phone:'
+        );
+        if (promptCode) {
+          ws.send(
+            JSON.stringify({
+              action: 'verify',
+              code: promptCode,
+              // If 2FA is required, you would prompt for password as well
+            })
+          );
+        }
+      } else if (data.event === 'authentication_failed') {
+        // Authentication failed
+        const errorMsg: TelegramMessage = {
+          id: Date.now(),
+          text: `Authentication failed: ${data.message}`,
+          date: new Date().toISOString(),
+          sender: {
+            id: null,
+            first_name: 'System',
+            last_name: null,
+            username: null,
+          },
+          has_media: false,
+        };
+        setMessages((prev) => [...prev, errorMsg]);
       } else if (data.event === 'new_message') {
         setMessages((prev) => [...prev, data.message]);
       } else if (data.event === 'subscription_update') {
@@ -202,7 +275,9 @@ export const SyncDetails: React.FC<SyncDetailsProps> = ({
           // Add subscription confirmation message
           const subMsg: TelegramMessage = {
             id: Date.now(),
-            text: `Subscribed to channel ${data.dialog_id}`,
+            text: data.dialog_name
+              ? `Subscribed to channel "${data.dialog_name}"`
+              : `Subscribed to channel with ID ${data.dialog_id}`,
             date: new Date().toISOString(),
             sender: {
               id: null,
@@ -219,7 +294,9 @@ export const SyncDetails: React.FC<SyncDetailsProps> = ({
         // Add error message
         const errorMsg: TelegramMessage = {
           id: Date.now(),
-          text: `Error: ${data.message}`,
+          text: data.message.includes('Dialog not found')
+            ? `Error: Could not find Telegram channel "${currentSync?.discussion_name}". Please verify the channel name.`
+            : `Error: ${data.message}`,
           date: new Date().toISOString(),
           sender: {
             id: null,

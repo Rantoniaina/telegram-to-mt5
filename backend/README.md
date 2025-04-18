@@ -246,9 +246,70 @@ curl -X POST http://localhost:8000/v1/telegram/disconnect \
   -d '{"api_id": 123456, "api_hash": "your_api_hash"}'
 ```
 
+## 🧪 Testing
+
+This project includes comprehensive test coverage for critical components including the WebSocket implementation, Telegram service, and database operations.
+
+### Running Tests
+
+```bash
+# Install test dependencies
+pip install -r requirements-test.txt
+
+# Run all tests
+pytest
+
+# Run specific test files
+pytest tests/test_websocket.py tests/test_websocket_endpoints.py
+
+# Generate coverage report
+pytest --cov=app --cov-report=term-missing
+```
+
+For detailed information about test coverage and writing new tests, see the [tests/README.md](tests/README.md) file.
+
 ## 🔒 Security Notes
 
 - Store your API credentials securely
 - In production, restrict CORS origins in the API configuration
 - Consider implementing proper authentication for the API endpoints
 - The application uses SQLite by default; consider using a more robust database for production
+
+## 🔄 Sync Service
+
+The backend includes a sync service that allows tracking and managing syncs for Telegram messages. This service is exposed through the API endpoints and uses the database to store sync configurations.
+
+### Sync API Endpoints
+
+- `GET /v1/sync/` - List all syncs
+- `GET /v1/sync/user/{user_id}` - Get all syncs for a specific user
+- `GET /v1/sync/state/{state}` - Get all syncs with a specific state
+- `GET /v1/sync/{sync_id}` - Get a specific sync
+- `POST /v1/sync/` - Create a new sync
+- `PUT /v1/sync/{sync_id}` - Update a sync
+- `PUT /v1/sync/{sync_id}/state/{state}` - Update a sync's state
+- `DELETE /v1/sync/{sync_id}` - Delete a sync
+
+### Using the Sync Service Programmatically
+
+```python
+from app.services import SyncService
+from app.models.sync import SyncState
+from sqlalchemy.orm import Session
+
+# Initialize the sync service with a database session
+sync_service = SyncService(db_session)
+
+# Create a new sync
+sync = sync_service.create_sync(
+    user_id=1,
+    discussion_name="Important Channel",
+    state=SyncState.ACTIVE
+)
+
+# Get all active syncs
+active_syncs = sync_service.get_syncs_by_state(SyncState.ACTIVE)
+
+# Update a sync's state
+sync_service.update_sync_state(sync_id=1, state=SyncState.PAUSED)
+```
